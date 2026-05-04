@@ -3,19 +3,19 @@ package com.nexusretail.security;
 public class SecurityConstants {
 
     public static final String[] WHITELIST = {
-            // Authentication & OAuth
-            "/api/v1/auth/login",
+            "/nexusretail/api/v1/auth/login",
+            "/nexusretail/api/v1/configuration/code-values/dropdown/**",
+            "/nexusretail/api/v1/configuration/**",
 
-            // Configuration - Public dropdown options
-            "/api/v1/configuration/code-values/dropdown/**",
-
-            // Swagger & API Docs
-            "/swagger-ui/**",
+            // Swagger / OpenAPI v3
             "/v3/api-docs/**",
+            "/v3/api-docs",
+            "/swagger-ui/**",
+            "/swagger-ui.html",
             "/swagger-resources/**",
-            "/swagger-resources",
-            "/api-docs",
-            "/api-docs/**"
+            "/webjars/**",
+            "/api-docs/**",
+            "/api-docs"
     };
 
     private SecurityConstants(){

@@ -1,5 +1,6 @@
 package com.nexusretail.feature.configuration.service.impl;
 
+import com.nexusretail.common.constant.Status;
 import com.nexusretail.common.dto.ResponseUtils;
 import com.nexusretail.common.dto.response.ApiResponse;
 import com.nexusretail.data.models.Code;
@@ -34,6 +35,7 @@ public class CodeServiceImpl implements CodeService {
             Code code = Code.builder()
                     .codeType(request.codeType())
                     .description(request.description())
+                    .status(Status.ACTIVE)
                     .build();
 
             Code savedCode = codeRepository.save(code);
@@ -64,7 +66,7 @@ public class CodeServiceImpl implements CodeService {
                             .id(code.getId())
                             .codeType(code.getCodeType())
                             .description(code.getDescription())
-                            .status(code.getStatus().name())
+                            .status(code.getStatus() != null ? code.getStatus().name() : Status.ACTIVE.name())
                             .build())
                     .collect(Collectors.toList());
 
@@ -86,7 +88,7 @@ public class CodeServiceImpl implements CodeService {
                                 .id(code.getId())
                                 .codeType(code.getCodeType())
                                 .description(code.getDescription())
-                                .status(code.getStatus().name())
+                                .status(code.getStatus() != null ? code.getStatus().name() : Status.ACTIVE.name())
                                 .build();
                         return ResponseUtils.createSuccessResponse("Code retrieved successfully", response);
                     })
@@ -108,7 +110,7 @@ public class CodeServiceImpl implements CodeService {
                                 .id(code.getId())
                                 .codeType(code.getCodeType())
                                 .description(code.getDescription())
-                                .status(code.getStatus().name())
+                                .status(code.getStatus() != null ? code.getStatus().name() : Status.ACTIVE.name())
                                 .build();
                         return ResponseUtils.createSuccessResponse("Code retrieved successfully", response);
                     })
@@ -141,7 +143,7 @@ public class CodeServiceImpl implements CodeService {
                                 .id(updatedCode.getId())
                                 .codeType(updatedCode.getCodeType())
                                 .description(updatedCode.getDescription())
-                                .status(updatedCode.getStatus().name())
+                                .status(updatedCode.getStatus() != null ? updatedCode.getStatus().name() : Status.ACTIVE.name())
                                 .build();
 
                         return ResponseUtils.createSuccessResponse("Code updated successfully", response);
