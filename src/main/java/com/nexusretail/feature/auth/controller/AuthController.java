@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,8 +41,21 @@ public class AuthController {
                 required = true,
                 content = @Content(mediaType = "application/json", schema = @Schema(implementation = LoginRequest.class))
             )
-            @RequestBody LoginRequest loginRequest, HttpServletRequest request) {
-        ApiResponse response = authService.loginUser(loginRequest, request);
-        return ResponseUtils.buildResponse(request, response);
+            @RequestBody LoginRequest loginRequest, HttpServletRequest request, HttpServletResponse response) {
+        ApiResponse apiResponse = authService.loginUser(loginRequest, request, response);
+        return ResponseUtils.buildResponse(request, apiResponse);
+    }
+
+    @PostMapping("/logout")
+    @Operation(summary = "User Logout", description = "Logout user by clearing JWT token cookie")
+    @ApiResponses(value = {
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Logout successful",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class))),
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "500", description = "Internal server error",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class)))
+    })
+    public ResponseEntity<ApiResponse> logout(HttpServletRequest request, HttpServletResponse response) {
+        ApiResponse apiResponse = authService.logoutUser(request, response);
+        return ResponseUtils.buildResponse(request, apiResponse);
     }
 }

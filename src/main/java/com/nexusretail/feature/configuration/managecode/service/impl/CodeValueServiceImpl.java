@@ -1,5 +1,6 @@
 package com.nexusretail.feature.configuration.managecode.service.impl;
 
+import com.nexusretail.common.constant.BaseEnum;
 import com.nexusretail.common.constant.Status;
 import com.nexusretail.common.dto.ResponseUtils;
 import com.nexusretail.common.dto.response.ApiResponse;
@@ -46,7 +47,7 @@ public class CodeValueServiceImpl implements CodeValueService {
                     .display(request.display())
                     .description(request.description())
                     .orderPosition(request.orderPosition())
-                    .status(request.status() != null ? Status.valueOf(String.valueOf(request.status())) : Status.ACTIVE) // Default to ACTIVE if not provided
+                    .status(request.status() != null ? BaseEnum.fromValue(Status.class, request.status()) : Status.ACTIVE) // Default to ACTIVE if not provided
                     .build();
 
             CodeValue savedCodeValue = codeValueRepository.save(codeValue);
@@ -115,6 +116,7 @@ public class CodeValueServiceImpl implements CodeValueService {
                         codeValue.setDisplay(request.display());
                         codeValue.setDescription(request.description());
                         codeValue.setOrderPosition(request.orderPosition());
+                        codeValue.setStatus(request.status() != null ? BaseEnum.fromValue(Status.class, request.status()) : codeValue.getStatus());
 
                         CodeValue updatedCodeValue = codeValueRepository.save(codeValue);
                         log.info("CodeValue updated successfully: {}", id);

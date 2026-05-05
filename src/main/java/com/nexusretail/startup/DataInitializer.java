@@ -24,28 +24,55 @@ public class DataInitializer implements CommandLineRunner {
     public void run(String... args) throws Exception {
         log.info("Initializing system data...");
 
-        // Create ADMIN role if it doesn't exist
-        Role adminRole = roleRepository.findByName("ADMIN")
-                .orElseGet(() -> {
-                    Role role = Role.builder()
-                            .name("ADMIN")
-                            .build();
-                    return roleRepository.save(role);
-                });
-
-        log.info("ADMIN role ready: {}", adminRole.getName());
+        // Create roles
+        createRoles();
 
         // Create system admin user if it doesn't exist
+        createSystemAdminUser();
+
+        log.info("Data initialization completed successfully");
+    }
+
+    private void createRoles() {
+        // SYSTEM_ADMIN role (global, no shopId)
+        createRoleIfNotExists("SYSTEM_ADMIN", null);
+
+        // OWNER role (will be created per shop)
+        createRoleIfNotExists("OWNER", null); // Template role, actual owners will have shopId
+
+        // HR role (will be created per shop)
+        createRoleIfNotExists("HR", null); // Template role, actual HR will have shopId
+
+        // SALESPERSON role (will be created per shop)
+        createRoleIfNotExists("SALESPERSON", null); // Template role, actual salespeople will have shopId
+
+        log.info("All system roles initialized");
+    }
+
+    private void createRoleIfNotExists(String roleName, Long shopId) {
+        if (roleRepository.findByName(roleName).isEmpty()) {
+            Role role = Role.builder()
+                    .name(roleName)
+                    .shopId(shopId)
+                    .build();
+            roleRepository.save(role);
+            log.info("Role created: {}", roleName);
+        } else {
+            log.info("Role already exists: {}", roleName);
+        }
+    }
+
+    private void createSystemAdminUser() {
         if (userRepository.findByUsername("nexus").isEmpty()) {
+            Role adminRole = roleRepository.findByName("SYSTEM_ADMIN")
+                    .orElseThrow(() -> new RuntimeException("SYSTEM_ADMIN role not found"));
+
             User adminUser = User.builder()
                     .username("nexus")
                     .email("nexusretail@gmail.com")
-                    .createdAt(java.time.LocalDateTime.now())
-                    .updatedAt(java.time.LocalDateTime.now())
-                    .status(Status.ACTIVE)
                     .password(passwordEncoder.encode("password"))
                     .role(adminRole)
-                    .phoneNo("+1234567890") // Default phone number
+                    .phoneNo("+1234567890")
                     .build();
 
             userRepository.save(adminUser);
@@ -53,7 +80,5 @@ public class DataInitializer implements CommandLineRunner {
         } else {
             log.info("System admin user already exists");
         }
-
-        log.info("Data initialization completed successfully");
     }
 }

@@ -4,6 +4,7 @@ public class SecurityConstants {
 
     public static final String[] WHITELIST = {
             "/nexusretail/api/v1/auth/login",
+            "/nexusretail/api/v1/auth/logout",
             "/nexusretail/api/v1/configuration/code-values/dropdown/**",
             "/nexusretail/api/v1/configuration/**",
 
