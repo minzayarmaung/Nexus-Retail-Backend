@@ -11,6 +11,8 @@ import com.nexusretail.data.repositories.UserRepository;
 import com.nexusretail.feature.employee.dto.request.EmployeeRequest;
 import com.nexusretail.feature.employee.dto.response.EmployeeResponse;
 import com.nexusretail.feature.employee.service.EmployeeService;
+import com.nexusretail.common.utils.ServiceYearsCalculator;
+import com.nexusretail.common.utils.FileUploadUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -18,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -33,6 +36,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final FileUploadUtil fileUploadUtil;
 
     private static final String SYSTEM_ADMIN = "SYSTEM_ADMIN";
     private static final String OWNER = "OWNER";
@@ -332,6 +336,31 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
     }
 
+    @Override
+    public ApiResponse uploadProfilePicture(MultipartFile file) {
+        try {
+            User currentUser = getCurrentUser();
+
+            // Only OWNER can upload profile pictures
+            if (!OWNER.equals(currentUser.getRole().getName())) {
+                return ResponseUtils.createErrorResponse("Only OWNER can upload profile pictures", 403);
+            }
+
+            // Upload the file using FileUploadUtil
+            String fileUrl = fileUploadUtil.uploadProfilePicture(file);
+
+            log.info("Profile picture uploaded successfully by user: {} from shop: {}", currentUser.getEmail(), currentUser.getShopId());
+
+            return ResponseUtils.createSuccessResponse("Profile picture uploaded successfully", fileUrl);
+
+        } catch (IllegalArgumentException e) {
+            return ResponseUtils.createErrorResponse(e.getMessage(), 400);
+        } catch (Exception e) {
+            log.error("Error uploading profile picture: {}", e.getMessage(), e);
+            return ResponseUtils.createErrorResponse("Failed to upload profile picture: " + e.getMessage(), 500);
+        }
+    }
+
     // Helper methods
 
     private User getCurrentUser() {
@@ -416,6 +445,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .shopId(employee.getShopId())
                 .position(employee.getPosition())
                 .hireDate(employee.getHireDate())
+                .serviceYears(ServiceYearsCalculator.calculateServiceYears(employee.getHireDate()))
                 .salary(employee.getSalary())
                 .nrc(employee.getNrc())
                 .profilePictureUrl(employee.getProfilePictureUrl())

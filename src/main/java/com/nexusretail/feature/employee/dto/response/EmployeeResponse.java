@@ -41,6 +41,9 @@ public record EmployeeResponse(
         @Schema(description = "Employee hire date", example = "2023-01-01")
         LocalDate hireDate,
 
+        @Schema(description = "Employee service years", example = "1 year, 6 months, 15 days")
+        String serviceYears,
+
         @Schema(description = "Employee salary", example = "50000.00")
         String salary,
 

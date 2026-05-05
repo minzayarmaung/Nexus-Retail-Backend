@@ -3,6 +3,7 @@ package com.nexusretail.feature.employee.service;
 import com.nexusretail.common.dto.response.ApiResponse;
 import com.nexusretail.feature.employee.dto.request.EmployeeRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public interface EmployeeService {
@@ -62,4 +63,11 @@ public interface EmployeeService {
      * - SYSTEM_ADMIN cannot import employees
      */
     ApiResponse importEmployeesFromExcel(byte[] excelData);
+
+    /**
+     * Upload profile picture
+     * - OWNER can upload profile pictures for employees in their shop
+     * - Returns the URL of the uploaded file
+     */
+    ApiResponse uploadProfilePicture(MultipartFile file);
 }

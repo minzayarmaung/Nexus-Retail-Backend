@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/${api.base.path}/employees")
@@ -164,6 +165,29 @@ public class EmployeeController {
             )
             @RequestBody byte[] excelData, HttpServletRequest request) {
         ApiResponse apiResponse = employeeService.importEmployeesFromExcel(excelData);
+        return ResponseUtils.buildResponse(request, apiResponse);
+    }
+
+    @PostMapping("/upload-profile-picture")
+    @PreAuthorize("hasRole('OWNER')")
+    @Operation(summary = "Upload Profile Picture", description = "Upload employee profile picture (OWNER only)")
+    @ApiResponses(value = {
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Profile picture uploaded successfully",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class))),
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid file or file type not supported",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class))),
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "Access denied",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class))),
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "500", description = "Internal server error",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class)))
+    })
+    public ResponseEntity<ApiResponse> uploadProfilePicture(
+            @io.swagger.v3.oas.annotations.Parameter(
+                description = "Profile picture file (JPEG, PNG, etc.)",
+                required = true
+            )
+            @RequestParam("file") MultipartFile file, HttpServletRequest request) {
+        ApiResponse apiResponse = employeeService.uploadProfilePicture(file);
         return ResponseUtils.buildResponse(request, apiResponse);
     }
 }
