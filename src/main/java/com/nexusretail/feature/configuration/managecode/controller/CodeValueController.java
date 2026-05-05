@@ -1,12 +1,10 @@
-package com.nexusretail.feature.configuration.controller;
+package com.nexusretail.feature.configuration.managecode.controller;
 
 import com.nexusretail.common.dto.ResponseUtils;
 import com.nexusretail.common.dto.response.ApiResponse;
-import com.nexusretail.feature.configuration.dto.request.CodeValueRequest;
-import com.nexusretail.feature.configuration.service.CodeValueService;
+import com.nexusretail.feature.configuration.managecode.dto.request.CodeValueRequest;
+import com.nexusretail.feature.configuration.managecode.service.CodeValueService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;

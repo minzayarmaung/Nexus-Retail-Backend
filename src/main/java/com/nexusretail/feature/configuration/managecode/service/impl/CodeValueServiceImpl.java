@@ -1,14 +1,15 @@
-package com.nexusretail.feature.configuration.service.impl;
+package com.nexusretail.feature.configuration.managecode.service.impl;
 
+import com.nexusretail.common.constant.Status;
 import com.nexusretail.common.dto.ResponseUtils;
 import com.nexusretail.common.dto.response.ApiResponse;
 import com.nexusretail.data.models.Code;
 import com.nexusretail.data.models.CodeValue;
 import com.nexusretail.data.repositories.CodeRepository;
 import com.nexusretail.data.repositories.CodeValueRepository;
-import com.nexusretail.feature.configuration.dto.request.CodeValueRequest;
-import com.nexusretail.feature.configuration.dto.response.CodeValueResponse;
-import com.nexusretail.feature.configuration.service.CodeValueService;
+import com.nexusretail.feature.configuration.managecode.dto.request.CodeValueRequest;
+import com.nexusretail.feature.configuration.managecode.dto.response.CodeValueResponse;
+import com.nexusretail.feature.configuration.managecode.service.CodeValueService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -45,6 +46,7 @@ public class CodeValueServiceImpl implements CodeValueService {
                     .display(request.display())
                     .description(request.description())
                     .orderPosition(request.orderPosition())
+                    .status(request.status() != null ? Status.valueOf(String.valueOf(request.status())) : Status.ACTIVE) // Default to ACTIVE if not provided
                     .build();
 
             CodeValue savedCodeValue = codeValueRepository.save(codeValue);

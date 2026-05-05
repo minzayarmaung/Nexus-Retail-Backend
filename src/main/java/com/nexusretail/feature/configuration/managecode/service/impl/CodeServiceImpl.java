@@ -1,13 +1,13 @@
-package com.nexusretail.feature.configuration.service.impl;
+package com.nexusretail.feature.configuration.managecode.service.impl;
 
 import com.nexusretail.common.constant.Status;
 import com.nexusretail.common.dto.ResponseUtils;
 import com.nexusretail.common.dto.response.ApiResponse;
 import com.nexusretail.data.models.Code;
 import com.nexusretail.data.repositories.CodeRepository;
-import com.nexusretail.feature.configuration.dto.request.CodeRequest;
-import com.nexusretail.feature.configuration.dto.response.CodeResponse;
-import com.nexusretail.feature.configuration.service.CodeService;
+import com.nexusretail.feature.configuration.managecode.dto.request.CodeRequest;
+import com.nexusretail.feature.configuration.managecode.dto.response.CodeResponse;
+import com.nexusretail.feature.configuration.managecode.service.CodeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

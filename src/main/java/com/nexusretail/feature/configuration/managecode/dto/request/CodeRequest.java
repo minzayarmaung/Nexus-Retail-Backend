@@ -1,4 +1,4 @@
-package com.nexusretail.feature.configuration.dto.request;
+package com.nexusretail.feature.configuration.managecode.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;

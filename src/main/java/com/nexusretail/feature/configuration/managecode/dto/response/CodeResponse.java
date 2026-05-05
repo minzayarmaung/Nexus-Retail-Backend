@@ -1,4 +1,4 @@
-package com.nexusretail.feature.configuration.dto.response;
+package com.nexusretail.feature.configuration.managecode.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;

@@ -1,4 +1,4 @@
-package com.nexusretail.feature.configuration.dto.request;
+package com.nexusretail.feature.configuration.managecode.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -19,5 +19,8 @@ public record CodeValueRequest(
         String description,
 
         @Schema(description = "Display order position", example = "1", required = true)
-        Integer orderPosition
+        Integer orderPosition,
+
+        @Schema(description = "Status", example = "ACTIVE", required = true)
+        Long status
 ) {}

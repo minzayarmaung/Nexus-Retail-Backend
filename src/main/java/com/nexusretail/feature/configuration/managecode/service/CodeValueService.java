@@ -1,7 +1,7 @@
-package com.nexusretail.feature.configuration.service;
+package com.nexusretail.feature.configuration.managecode.service;
 
 import com.nexusretail.common.dto.response.ApiResponse;
-import com.nexusretail.feature.configuration.dto.request.CodeValueRequest;
+import com.nexusretail.feature.configuration.managecode.dto.request.CodeValueRequest;
 import org.springframework.stereotype.Service;
 
 @Service
