@@ -25,8 +25,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     // Search and filter methods
     @Query("SELECT e FROM Employee e WHERE e.shopId = :shopId AND " +
            "(:searchTerm IS NULL OR " +
-           "LOWER(e.firstName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-           "LOWER(e.lastName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+           "LOWER(e.name) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
            "LOWER(e.email) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
            "LOWER(e.phoneNo) LIKE LOWER(CONCAT('%', :searchTerm, '%')))")
     List<Employee> findByShopIdWithSearch(@Param("shopId") Long shopId, @Param("searchTerm") String searchTerm);

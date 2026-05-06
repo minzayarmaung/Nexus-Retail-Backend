@@ -55,10 +55,15 @@ public class EmployeeServiceImpl implements EmployeeService {
                 return ResponseUtils.createErrorResponse("Employee with this email already exists", 400);
             }
 
+            // Process profile picture URL - use profilePicUrl if provided
+            String finalProfilePictureUrl = request.profilePicUrl();
+            if (finalProfilePictureUrl == null || finalProfilePictureUrl.trim().isEmpty()) {
+                finalProfilePictureUrl = generateDummyProfilePicture();
+            }
+
             // Create employee
             Employee employee = Employee.builder()
-                    .firstName(request.firstName())
-                    .lastName(request.lastName())
+                    .name(request.name())
                     .email(request.email())
                     .phoneNo(request.phoneNo())
                     .dateOfBirth(request.dateOfBirth())
@@ -66,9 +71,9 @@ public class EmployeeServiceImpl implements EmployeeService {
                     .shopId(shopId)
                     .position(request.position())
                     .hireDate(request.hireDate())
-                    .salary(request.salary())
+                    .salary(request.payLevel())
                     .nrc(request.nrc())
-                    .profilePictureUrl(request.profilePictureUrl() != null ? request.profilePictureUrl() : generateDummyProfilePicture())
+                    .profilePictureUrl(finalProfilePictureUrl)
                     .build();
 
             // Optionally create user account
@@ -164,14 +169,17 @@ public class EmployeeServiceImpl implements EmployeeService {
                         }
 
                         // Update employee fields
-                        employee.setFirstName(request.firstName());
-                        employee.setLastName(request.lastName());
+                        employee.setName(request.name());
                         employee.setPhoneNo(request.phoneNo());
                         employee.setDateOfBirth(request.dateOfBirth());
                         employee.setAddress(request.address());
                         employee.setPosition(request.position());
                         employee.setHireDate(request.hireDate());
-                        employee.setSalary(request.salary());
+                        employee.setSalary(request.payLevel());
+                        employee.setNrc(request.nrc());
+                        if (request.profilePicUrl() != null && !request.profilePicUrl().trim().isEmpty()) {
+                            employee.setProfilePictureUrl(request.profilePicUrl());
+                        }
 
                         // Note: Email cannot be changed as it's unique identifier
                         // User account creation/update not allowed in update operation
@@ -245,8 +253,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 if (searchTerm != null && !searchTerm.trim().isEmpty()) {
                     final String search = searchTerm.trim().toLowerCase();
                     employees = employees.stream()
-                            .filter(emp -> emp.getFirstName().toLowerCase().contains(search) ||
-                                         emp.getLastName().toLowerCase().contains(search) ||
+                            .filter(emp -> emp.getName().toLowerCase().contains(search) ||
                                          emp.getEmail().toLowerCase().contains(search) ||
                                          emp.getPhoneNo().toLowerCase().contains(search))
                             .collect(Collectors.toList());
@@ -435,9 +442,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         return EmployeeResponse.builder()
                 .id(employee.getId())
-                .firstName(employee.getFirstName())
-                .lastName(employee.getLastName())
-                .fullName(employee.getFullName())
+                .name(employee.getName())
                 .email(employee.getEmail())
                 .phoneNo(employee.getPhoneNo())
                 .dateOfBirth(employee.getDateOfBirth())

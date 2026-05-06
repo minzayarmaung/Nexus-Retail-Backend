@@ -23,10 +23,7 @@ import java.time.LocalDate;
 public class Employee extends Auditable {
 
     @Column(nullable = false)
-    private String firstName;
-
-    @Column(nullable = false)
-    private String lastName;
+    private String name;
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -62,9 +59,4 @@ public class Employee extends Auditable {
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
-
-    // Helper method to get full name
-    public String getFullName() {
-        return firstName + " " + lastName;
-    }
 }
