@@ -14,5 +14,7 @@ public class PaginationMeta {
     private int totalPages;
     private int currentPage;
     private String method;
+    private long totalElements;
+    private int pageSize;
     private String endpoint;
 }

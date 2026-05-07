@@ -19,7 +19,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.format.DateTimeFormatter;
@@ -29,7 +28,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@Transactional
 public class EmployeeServiceImpl implements EmployeeService {
 
     private final EmployeeRepository employeeRepository;
@@ -97,7 +95,6 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public ApiResponse getAllEmployees() {
         try {
             User currentUser = getCurrentUser();
@@ -126,7 +123,6 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public ApiResponse getEmployeeById(Long id) {
         try {
             User currentUser = getCurrentUser();
@@ -232,7 +228,6 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public ApiResponse getAllEmployeesWithFilters(String searchTerm, String position) {
         try {
             User currentUser = getCurrentUser();
@@ -289,7 +284,6 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public ApiResponse exportEmployeesToExcel() {
         try {
             User currentUser = getCurrentUser();

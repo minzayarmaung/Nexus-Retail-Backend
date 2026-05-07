@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,7 +33,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@Transactional
 public class MerchantServiceImpl implements MerchantService {
 
     private final UserRepository userRepository;
@@ -80,16 +80,14 @@ public class MerchantServiceImpl implements MerchantService {
                 return ResponseUtils.createErrorResponse("Email already exists: " + request.email(), 400);
             }
 
-            // Find or create OWNER role for this shop
-            Role ownerRole = roleRepository.findByNameAndShopId(OWNER, request.shopId())
-                    .orElseGet(() -> {
-                        // Fetch the shop entity
-                        Shop shop = shopRepository.findById(request.shopId())
-                                .orElseThrow(() -> new RuntimeException("Shop not found with id: " + request.shopId()));
+            Shop shop = shopRepository.findById(request.shopId())
+                    .orElseThrow(() -> new RuntimeException("Shop not found with id: " + request.shopId()));
 
+            // Find if Role Already Exist
+            Role ownerRole = roleRepository.findByName(OWNER)
+                    .orElseGet(() -> {
                         Role newRole = Role.builder()
                                 .name(OWNER)
-                                .shop(shop)  // Set the shop relationship, not shopId
                                 .build();
                         return roleRepository.save(newRole);
                     });
@@ -104,6 +102,10 @@ public class MerchantServiceImpl implements MerchantService {
                     .role(ownerRole)
                     .build();
 
+            // Setting Owner
+            shop.setOwnerId(shopOwner.getId());
+            
+            shopRepository.save(shop);
             User savedUser = userRepository.save(shopOwner);
             log.info("Shop owner created successfully: {} for shop: {}", savedUser.getUsername(), request.shopId());
 
@@ -141,9 +143,6 @@ public class MerchantServiceImpl implements MerchantService {
             if (request.type() == null || request.type().trim().isEmpty()) {
                 return ResponseUtils.createErrorResponse("Shop type is required", 400);
             }
-            if (request.ownerId() == null) {
-                return ResponseUtils.createErrorResponse("Owner ID is required", 400);
-            }
             if (request.addresses() == null || request.addresses().isEmpty()) {
                 return ResponseUtils.createErrorResponse("At least one address is required", 400);
             }
@@ -153,21 +152,12 @@ public class MerchantServiceImpl implements MerchantService {
                 return ResponseUtils.createErrorResponse("Shop with this name already exists: " + request.name(), 400);
             }
 
-            // Verify owner exists and has OWNER role
-            User owner = userRepository.findById(request.ownerId())
-                    .orElseThrow(() -> new IllegalArgumentException("Owner not found with id: " + request.ownerId()));
-
-            if (!OWNER.equals(owner.getRole().getName())) {
-                return ResponseUtils.createErrorResponse("Specified user is not an OWNER", 400);
-            }
-
             // Create shop
             Shop shop = Shop.builder()
                     .name(request.name().trim())
                     .type(request.type().trim())
                     .phoneNo(request.phoneNo())
                     .shopPhotoUrl(request.shopPhotoUrl())
-                    .ownerId(request.ownerId())
                     .build();
 
             Shop savedShop = shopRepository.save(shop);
@@ -184,12 +174,14 @@ public class MerchantServiceImpl implements MerchantService {
                             .latitude(addr.latitude())
                             .longitude(addr.longitude())
                             .shopId(savedShop.getId())
+                            .createdAt(savedShop.getCreatedAt())
+                            .updatedAt(savedShop.getUpdatedAt())
                             .build())
                     .collect(Collectors.toList());
 
             shopAddressRepository.saveAll(addresses);
 
-            log.info("Shop created successfully: {} with owner: {}", savedShop.getName(), request.ownerId());
+            log.info("Shop created successfully: {}", savedShop.getName());
 
             ShopResponse response = buildShopResponse(savedShop);
             return ResponseUtils.createSuccessResponse("Shop created successfully", response);
@@ -201,7 +193,6 @@ public class MerchantServiceImpl implements MerchantService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public ApiResponse getAllShops() {
         try {
             User currentUser = getCurrentUser();
@@ -230,7 +221,6 @@ public class MerchantServiceImpl implements MerchantService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public ApiResponse getShopById(Long id) {
         try {
             User currentUser = getCurrentUser();
@@ -347,7 +337,6 @@ public class MerchantServiceImpl implements MerchantService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public ApiResponse getShopsByOwner(Long ownerId) {
         try {
             User currentUser = getCurrentUser();
@@ -372,7 +361,6 @@ public class MerchantServiceImpl implements MerchantService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public ApiResponse searchShops(String searchTerm) {
         try {
             User currentUser = getCurrentUser();
@@ -415,8 +403,8 @@ public class MerchantServiceImpl implements MerchantService {
 
     private User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getCredentials().toString();
-        return userRepository.findByUsername(username)
+        String email = authentication.getName();
+        return userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Current user not found"));
     }
 
@@ -482,6 +470,8 @@ public class MerchantServiceImpl implements MerchantService {
                         .latitude(addr.getLatitude())
                         .longitude(addr.getLongitude())
                         .shopId(addr.getShopId())
+                        .createdAt(LocalDateTime.parse(addr.getCreatedAt().format(formatter)))
+                        .updatedAt(LocalDateTime.parse(addr.getUpdatedAt().format(formatter)))
                         .build())
                 .collect(Collectors.toList());
 

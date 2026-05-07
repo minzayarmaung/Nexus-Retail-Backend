@@ -26,7 +26,7 @@ public class MerchantController {
 
     private final MerchantService merchantService;
 
-    @PostMapping("/owners")
+    @PostMapping("/owner")
     @PreAuthorize("hasRole('SYSTEM_ADMIN')")
     @Operation(summary = "Create Shop Owner", description = "Create a new shop owner user (SYSTEM_ADMIN only)")
     @ApiResponses(value = {
@@ -74,7 +74,7 @@ public class MerchantController {
         return ResponseUtils.buildResponse(httpRequest, apiResponse);
     }
 
-    @GetMapping
+    @GetMapping("/shops")
     @PreAuthorize("hasRole('SYSTEM_ADMIN') or hasRole('OWNER')")
     @Operation(summary = "Get All Shops", description = "Get all shops (SYSTEM_ADMIN sees all, OWNER sees only their shops)")
     @ApiResponses(value = {

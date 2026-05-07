@@ -35,7 +35,7 @@ public class Shop extends Auditable {
     @Column(nullable = true)
     private String shopPhotoUrl; // URL to shop photo
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Long ownerId; // Reference to User who owns this shop
 
     @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

@@ -20,8 +20,8 @@ public record CreateShopRequest(
         @Schema(description = "Shop photo URL", example = "https://example.com/shop-photo.jpg")
         String shopPhotoUrl,
 
-        @Schema(description = "Owner ID (User ID of the shop owner)", example = "1", required = true)
-        Long ownerId,
+//        @Schema(description = "Owner ID (User ID of the shop owner)", example = "1", required = true)
+//        Long ownerId,
 
         @Schema(description = "Shop addresses", required = true)
         List<CreateShopAddressRequest> addresses
