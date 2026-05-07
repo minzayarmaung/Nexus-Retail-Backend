@@ -58,4 +58,11 @@ public class AuthController {
         ApiResponse apiResponse = authService.logoutUser(request, response);
         return ResponseUtils.buildResponse(request, apiResponse);
     }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<ApiResponse> refreshToken(HttpServletRequest request,
+                                                    HttpServletResponse httpResponse) {
+        final ApiResponse response = authService.refreshToken(request, httpResponse);
+        return ResponseUtils.buildResponse(request , response);
+    }
 }

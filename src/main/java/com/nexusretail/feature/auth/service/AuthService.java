@@ -10,4 +10,6 @@ import org.springframework.stereotype.Service;
 public interface AuthService {
     ApiResponse loginUser(LoginRequest loginRequest, HttpServletRequest request, HttpServletResponse response);
     ApiResponse logoutUser(HttpServletRequest request, HttpServletResponse response);
+
+    ApiResponse refreshToken(HttpServletRequest request, HttpServletResponse httpResponse);
 }
