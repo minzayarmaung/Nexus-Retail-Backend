@@ -1,5 +1,6 @@
 package com.nexusretail.feature.merchant.service.impl;
 
+import com.nexusretail.common.constant.Status;
 import com.nexusretail.common.dto.ResponseUtils;
 import com.nexusretail.common.dto.response.ApiResponse;
 import com.nexusretail.data.models.Role;
@@ -16,6 +17,9 @@ import com.nexusretail.feature.merchant.dto.request.UpdateShopRequest;
 import com.nexusretail.feature.merchant.dto.response.ShopAddressResponse;
 import com.nexusretail.feature.merchant.dto.response.ShopResponse;
 import com.nexusretail.feature.merchant.service.MerchantService;
+import com.nexusretail.feature.user.dto.response.UserResponse;
+import com.nexusretail.feature.user.mapper.UserMapper;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -44,87 +48,52 @@ public class MerchantServiceImpl implements MerchantService {
     private static final String SYSTEM_ADMIN = "SYSTEM_ADMIN";
     private static final String OWNER = "OWNER";
 
+    private final UserMapper userMapper;
+
     @Override
+    @Transactional
     public ApiResponse createShopOwner(CreateMerchantRequest request) {
-        try {
-            // Validate that current user is SYSTEM_ADMIN
-            User currentUser = getCurrentUser();
-            if (!SYSTEM_ADMIN.equals(currentUser.getRole().getName())) {
-                return ResponseUtils.createErrorResponse("Only SYSTEM_ADMIN can create shop owners", 403);
-            }
 
-            // Validate input
-            if (request.username() == null || request.username().trim().isEmpty()) {
-                return ResponseUtils.createErrorResponse("Username is required", 400);
-            }
-            if (request.email() == null || request.email().trim().isEmpty()) {
-                return ResponseUtils.createErrorResponse("Email is required", 400);
-            }
-            if (request.password() == null || request.password().trim().isEmpty()) {
-                return ResponseUtils.createErrorResponse("Password is required", 400);
-            }
-            if (request.phoneNo() == null || request.phoneNo().trim().isEmpty()) {
-                return ResponseUtils.createErrorResponse("Phone number is required", 400);
-            }
-            if (request.shopId() == null) {
-                return ResponseUtils.createErrorResponse("Shop ID is required", 400);
-            }
-
-            // Check if username already exists
-            if (userRepository.findByUsername(request.username().trim()).isPresent()) {
-                return ResponseUtils.createErrorResponse("Username already exists: " + request.username(), 400);
-            }
-
-            // Check if email already exists
-            if (userRepository.findByEmail(request.email().trim()).isPresent()) {
-                return ResponseUtils.createErrorResponse("Email already exists: " + request.email(), 400);
-            }
-
-            Shop shop = shopRepository.findById(request.shopId())
-                    .orElseThrow(() -> new RuntimeException("Shop not found with id: " + request.shopId()));
-
-            // Find if Role Already Exist
-            Role ownerRole = roleRepository.findByName(OWNER)
-                    .orElseGet(() -> {
-                        Role newRole = Role.builder()
-                                .name(OWNER)
-                                .build();
-                        return roleRepository.save(newRole);
-                    });
-
-            // Create shop owner user
-            User shopOwner = User.builder()
-                    .username(request.username().trim())
-                    .email(request.email().trim())
-                    .password(passwordEncoder.encode(request.password()))
-                    .phoneNo(request.phoneNo().trim())
-                    .shopId(request.shopId())
-                    .role(ownerRole)
-                    .build();
-
-            // Setting Owner
-            shop.setOwnerId(shopOwner.getId());
-            
-            shopRepository.save(shop);
-            User savedUser = userRepository.save(shopOwner);
-            log.info("Shop owner created successfully: {} for shop: {}", savedUser.getUsername(), request.shopId());
-
-            // Return user details (without password)
-            var userResponse = new Object() {
-                public final Long id = savedUser.getId();
-                public final String username = savedUser.getUsername();
-                public final String email = savedUser.getEmail();
-                public final String phoneNo = savedUser.getPhoneNo();
-                public final Long shopId = savedUser.getShopId();
-                public final String role = savedUser.getRole().getName();
-            };
-
-            return ResponseUtils.createSuccessResponse("Shop owner created successfully", userResponse);
-
-        } catch (Exception e) {
-            log.error("Error creating shop owner: {}", e.getMessage(), e);
-            return ResponseUtils.createErrorResponse("Failed to create shop owner: " + e.getMessage(), 500);
+        User currentUser = getCurrentUser();
+        if (!SYSTEM_ADMIN.equals(currentUser.getRole().getName())) {
+            return ResponseUtils.createErrorResponse("Only SYSTEM_ADMIN can create shop owners", 403);
         }
+
+        if (userRepository.findByUsername(request.username().trim()).isPresent()) {
+            return ResponseUtils.createErrorResponse("Username already exists: " + request.username(), 409);
+        }
+        if (userRepository.findByEmail(request.email().trim()).isPresent()) {
+            return ResponseUtils.createErrorResponse("Email already exists: " + request.email(), 409);
+        }
+
+        Shop shop = shopRepository.findById(request.shopId())
+                .orElseThrow(() -> new EntityNotFoundException("Shop not found with id: " + request.shopId()));
+
+        Role ownerRole = roleRepository.findByName(OWNER)
+                .orElseGet(() -> roleRepository.save(
+                        Role.builder().name(OWNER).build()
+                ));
+
+        User shopOwner = User.builder()
+                .username(request.username().trim())
+                .email(request.email().trim())
+                .password(passwordEncoder.encode(request.password()))
+                .phoneNo(request.phoneNo().trim())
+                .shopId(request.shopId())
+                .status(Status.ACTIVE)
+                .role(ownerRole)
+                .build();
+
+        User savedUser = userRepository.save(shopOwner);
+
+        shop.setOwnerId(savedUser.getId());
+        shopRepository.save(shop);
+
+        log.info("Shop owner created: {} for shop: {}", savedUser.getUsername(), request.shopId());
+
+        UserResponse userResponse = userMapper.toResponse(savedUser);
+
+        return ResponseUtils.createSuccessResponse("Shop owner created successfully", userResponse);
     }
 
     @Override
@@ -176,6 +145,7 @@ public class MerchantServiceImpl implements MerchantService {
                             .shopId(savedShop.getId())
                             .createdAt(savedShop.getCreatedAt())
                             .updatedAt(savedShop.getUpdatedAt())
+                            .status(Status.ACTIVE)
                             .build())
                     .collect(Collectors.toList());
 
