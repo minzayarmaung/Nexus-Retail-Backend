@@ -55,6 +55,10 @@ public class Employee extends Auditable {
     @Column(nullable = true)
     private String profilePictureUrl; // URL to employee profile picture
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "shopId", referencedColumnName = "id", insertable = false, updatable = false)
+    private Shop shop;
+
     // Optional relationship to User (not all employees have user accounts)
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")

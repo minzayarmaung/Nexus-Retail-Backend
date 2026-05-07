@@ -4,6 +4,8 @@ import com.nexusretail.data.common.Auditable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,6 +28,7 @@ public class Role extends Auditable {
     @Column(nullable = false, unique = true)
     private String name; // SYSTEM_ADMIN, OWNER, HR, SALESPERSON
 
-    @Column(nullable = true)
-    private Long shopId; // NULL for SYSTEM_ADMIN, specific shopId for others
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "shopId", referencedColumnName = "id", nullable = true)
+    private Shop shop; // NULL for SYSTEM_ADMIN, specific shopId for others
 }

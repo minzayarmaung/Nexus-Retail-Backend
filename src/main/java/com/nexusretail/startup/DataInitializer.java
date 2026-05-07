@@ -53,7 +53,7 @@ public class DataInitializer implements CommandLineRunner {
         if (roleRepository.findByName(roleName).isEmpty()) {
             Role role = Role.builder()
                     .name(roleName)
-                    .shopId(shopId)
+                    .shop(null)  // Set shop to null for template roles
                     .build();
             roleRepository.save(role);
             log.info("Role created: {}", roleName);
