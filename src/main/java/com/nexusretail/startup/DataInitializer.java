@@ -1,6 +1,5 @@
 package com.nexusretail.startup;
 
-import com.nexusretail.common.constant.Status;
 import com.nexusretail.data.models.Role;
 import com.nexusretail.data.models.User;
 import com.nexusretail.data.repositories.RoleRepository;
@@ -53,7 +52,6 @@ public class DataInitializer implements CommandLineRunner {
         if (roleRepository.findByName(roleName).isEmpty()) {
             Role role = Role.builder()
                     .name(roleName)
-                    .shop(null)  // Set shop to null for template roles
                     .build();
             roleRepository.save(role);
             log.info("Role created: {}", roleName);

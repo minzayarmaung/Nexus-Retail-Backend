@@ -75,7 +75,6 @@ private boolean hasPermissionToAccessEmployee(User currentUser, Employee employe
 @Repository
 public interface RoleRepository extends JpaRepository<Role, Long> {
     Optional<Role> findByName(String name);
-    Optional<Role> findByNameAndShopId(String name, Long shopId);
 }
 ```
 

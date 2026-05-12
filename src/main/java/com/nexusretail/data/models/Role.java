@@ -20,15 +20,10 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 @Table(name = "roles", indexes = {
-    @Index(name = "index_role_name", columnList = "name"),
-    @Index(name = "index_role_name_shop", columnList = "name, shopId")
+    @Index(name = "index_role_name", columnList = "name")
 })
 public class Role extends Auditable {
 
     @Column(nullable = false, unique = true)
     private String name; // SYSTEM_ADMIN, OWNER, HR, SALESPERSON
-
-    @ManyToOne(optional = true)
-    @JoinColumn(name = "shopId", referencedColumnName = "id", nullable = true)
-    private Shop shop; // NULL for SYSTEM_ADMIN, specific shopId for others
 }

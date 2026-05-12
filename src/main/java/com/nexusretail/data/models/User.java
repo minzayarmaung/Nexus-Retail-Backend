@@ -34,10 +34,6 @@ public class User extends Auditable {
     @Column(nullable = false)
     private String phoneNo;
 
-     @ManyToOne(fetch = FetchType.LAZY)
-     @JoinColumn(name = "shopId", referencedColumnName = "id", insertable = false, updatable = false)
-     private Shop shop;
-
      @ManyToOne
      @JoinColumn(name = "role_id", referencedColumnName = "id")
      private Role role;
