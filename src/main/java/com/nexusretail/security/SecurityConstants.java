@@ -8,8 +8,6 @@ public class SecurityConstants {
 
             "/nexusretail/api/v1/configuration/code-values/dropdown/**",
             "/nexusretail/api/v1/configuration/**",
-            "/nexusretail/api/v1/shops/**",
-            "/nexusretail/api/v1/employees/**",
 
             // Swagger / OpenAPI v3
             "/v3/api-docs/**",

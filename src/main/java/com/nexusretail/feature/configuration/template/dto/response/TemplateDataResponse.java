@@ -5,6 +5,5 @@ import lombok.Builder;
 @Builder
 public record TemplateDataResponse(
         String name,
-        String description,
-        String
+        String description
 ){}

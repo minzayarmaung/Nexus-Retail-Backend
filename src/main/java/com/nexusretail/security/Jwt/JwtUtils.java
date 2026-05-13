@@ -27,7 +27,7 @@ public class JwtUtils {
     private long jwtExpirationMs;
 
     public long ACCESS_TOKEN_VALID_TIME_MILLIS() {
-        return 3 * 60 * 1000L; // 3 minutes
+        return 30 * 60 * 1000L; // 30 minutes
     }
 
     public long REFRESH_TOKEN_VALID_TIME_MILLIS() {

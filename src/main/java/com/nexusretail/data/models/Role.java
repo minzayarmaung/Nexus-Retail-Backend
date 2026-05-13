@@ -26,4 +26,9 @@ public class Role extends Auditable {
 
     @Column(nullable = false, unique = true)
     private String name; // SYSTEM_ADMIN, OWNER, HR, SALESPERSON
+
+    private String description;
+
+    private boolean disabled;
+
 }
