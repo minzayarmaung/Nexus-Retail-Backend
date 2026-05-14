@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
@@ -22,6 +23,7 @@ public class RoleController {
 
     private final RoleService roleService;
 
+    @PreAuthorize("hasRole('SYSTEM_ADMIN')")
     @GetMapping
     @Operation(summary = "List Roles", description = "Example Requests:\n" + "\n" + "roles\n" + "\n" + "\n" + "roles?fields=name")
     @ApiResponses({
@@ -36,7 +38,8 @@ public class RoleController {
         return ResponseEntity.ok().body(roles);
     }
 
-    @PostMapping("/{id}")
+    @PreAuthorize("hasRole('SYSTEM_ADMIN')")
+    @GetMapping("/{id}")
     @Operation(summary = "Get Role by ID", description = "Example Requests:\n" + "\n" + "roles/1\n" + "\n" + "\n" + "roles/1?fields=name")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Role retrieved successfully"),
@@ -50,7 +53,7 @@ public class RoleController {
         final RoleResponse role = this.roleService.retrieveRoleById(id, request);
         return ResponseEntity.ok().body(role);
     }
-
+    @PreAuthorize("hasRole('SYSTEM_ADMIN')")
     @PostMapping
     @Operation(summary = "Create Role", description = "Example Requests:\n" + "\n" + "roles\n" + "\n" + "\n" + "roles?fields=name")
     @ApiResponses({
@@ -65,8 +68,9 @@ public class RoleController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @PatchMapping
-    @Operation(summary = "Update Role", description = "Example Requests:\n" + "\n" + "roles\n" + "\n" + "\n" + "roles?fields=name")
+    @PreAuthorize("hasRole('SYSTEM_ADMIN')")
+    @PatchMapping("/{id}")
+    @Operation(summary = "Update Role", description = "Example Requests:\n" + "\n" + "roles/1\n" + "\n" + "\n" + "roles/1?fields=name")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Role updated successfully"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode   = "400", description = "Bad Request"),
