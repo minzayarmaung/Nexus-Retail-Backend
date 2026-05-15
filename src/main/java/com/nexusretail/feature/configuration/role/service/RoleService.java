@@ -15,4 +15,5 @@ public interface RoleService {
 
     RoleResponse updateRole(Long id, RoleRequest roleRequest);
 
+    void deleteRole(Long id);
 }

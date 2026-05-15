@@ -115,6 +115,26 @@ public class RoleServiceImpl implements RoleService {
         }
     }
 
+    @Override
+    public void deleteRole(Long id) {
+        try {
+            Role role = roleRepository.findById(id)
+                    .orElseThrow(() ->
+                            new EntityNotFoundException(
+                                    "Role not found with id: " + id
+                            )
+                    );
+
+            roleRepository.delete(role);
+
+        } catch (Exception ex) {
+            log.error("Failed to delete role", ex);
+            throw new RuntimeException(
+                    "Unable to delete role: " + ex.getMessage()
+            );
+        }
+    }
+
     private RoleResponse mapToRoleResponse(Role role) {
 
         return RoleResponse.builder()

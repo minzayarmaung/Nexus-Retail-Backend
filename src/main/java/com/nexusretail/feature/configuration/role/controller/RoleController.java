@@ -84,4 +84,12 @@ public class RoleController {
         final RoleResponse response = roleService.updateRole(id, roleRequest);
         return ResponseEntity.ok(response);
     }
+    
+    @PreAuthorize("hasRole('SYSTEM_ADMIN')")
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Delete Role", description = "Delete Role by Id")
+    public ResponseEntity<String> deleteRole(@PathVariable Long id) {
+        this.roleService.deleteRole(id);
+        return ResponseEntity.ok("Role with id " + id + " has been deleted successfully.");
+    }
 }
