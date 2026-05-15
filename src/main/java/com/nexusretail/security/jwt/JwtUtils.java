@@ -1,4 +1,4 @@
-package com.nexusretail.security.Jwt;
+package com.nexusretail.security.jwt;
 
 import com.nexusretail.data.models.User;
 import io.jsonwebtoken.*;

@@ -18,12 +18,12 @@ import java.util.Collection;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("${api.base.path}/roles")
-@Tag(name = "Roles Controller", description = "Manage Roles and Permissions")
+@Tag(name = "Role Permissions", description = "Assign or remove permissions from a role")
 public class RoleController {
 
     private final RoleService roleService;
 
-    @PreAuthorize("hasRole('SYSTEM_ADMIN')")
+    @PreAuthorize("hasPermission('READ_ROLE_PERMISSION')")
     @GetMapping
     @Operation(summary = "List Roles", description = "Example Requests:\n" + "\n" + "roles\n" + "\n" + "\n" + "roles?fields=name")
     @ApiResponses({
@@ -38,7 +38,7 @@ public class RoleController {
         return ResponseEntity.ok().body(roles);
     }
 
-    @PreAuthorize("hasRole('SYSTEM_ADMIN')")
+    @PreAuthorize("hasPermission('READ_ROLE')")
     @GetMapping("/{id}")
     @Operation(summary = "Get Role by ID", description = "Example Requests:\n" + "\n" + "roles/1\n" + "\n" + "\n" + "roles/1?fields=name")
     @ApiResponses({
@@ -53,7 +53,8 @@ public class RoleController {
         final RoleResponse role = this.roleService.retrieveRoleById(id, request);
         return ResponseEntity.ok().body(role);
     }
-    @PreAuthorize("hasRole('SYSTEM_ADMIN')")
+
+    @PreAuthorize("hasPermission('CREATE_ROLE')")
     @PostMapping
     @Operation(summary = "Create Role", description = "Example Requests:\n" + "\n" + "roles\n" + "\n" + "\n" + "roles?fields=name")
     @ApiResponses({
@@ -68,7 +69,7 @@ public class RoleController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @PreAuthorize("hasRole('SYSTEM_ADMIN')")
+    @PreAuthorize("hasPermission('UPDATE_ROLE_PERMISSION')")
     @PatchMapping("/{id}")
     @Operation(summary = "Update Role", description = "Example Requests:\n" + "\n" + "roles/1\n" + "\n" + "\n" + "roles/1?fields=name")
     @ApiResponses({
@@ -84,8 +85,8 @@ public class RoleController {
         final RoleResponse response = roleService.updateRole(id, roleRequest);
         return ResponseEntity.ok(response);
     }
-    
-    @PreAuthorize("hasRole('SYSTEM_ADMIN')")
+
+    @PreAuthorize("hasPermission('DELETE_ROLE')")
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete Role", description = "Delete Role by Id")
     public ResponseEntity<String> deleteRole(@PathVariable Long id) {

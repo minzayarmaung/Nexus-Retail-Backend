@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,6 +21,7 @@ public class CodeController {
 
     private final CodeService codeService;
 
+    @PreAuthorize("hasPermission('CREATE_CODE')")
     @PostMapping
     @Operation(summary = "Create Code", description = "Create a new code type for dynamic dropdown")
     @ApiResponses(value = {
@@ -34,6 +36,7 @@ public class CodeController {
         return ResponseUtils.buildResponse(httpRequest, response);
     }
 
+    @PreAuthorize("hasPermission('READ_CODE')")
     @GetMapping
     @Operation(summary = "Get All Codes", description = "Retrieve all code types")
     @ApiResponses(value = {
@@ -45,6 +48,7 @@ public class CodeController {
         return ResponseUtils.buildResponse(httpRequest, response);
     }
 
+    @PreAuthorize("hasPermission('READ_CODE')")
     @GetMapping("/{id}")
     @Operation(summary = "Get Code by ID", description = "Retrieve code details by ID")
     @ApiResponses(value = {
@@ -59,6 +63,7 @@ public class CodeController {
         return ResponseUtils.buildResponse(httpRequest, response);
     }
 
+    @PreAuthorize("hasPermission('READ_CODE')")
     @GetMapping("/type/{codeType}")
     @Operation(summary = "Get Code by Type", description = "Retrieve code details by code type")
     @ApiResponses(value = {
@@ -73,6 +78,7 @@ public class CodeController {
         return ResponseUtils.buildResponse(httpRequest, response);
     }
 
+    @PreAuthorize("hasPermission('UPDATE_CODE')")
     @PutMapping("/{id}")
     @Operation(summary = "Update Code", description = "Update code details")
     @ApiResponses(value = {
@@ -89,6 +95,7 @@ public class CodeController {
         return ResponseUtils.buildResponse(httpRequest, response);
     }
 
+    @PreAuthorize("hasPermission('DELETE_CODE')")
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete Code", description = "Delete a code and all its values")
     @ApiResponses(value = {
@@ -99,7 +106,7 @@ public class CodeController {
     public ResponseEntity<ApiResponse> deleteCode(
             @PathVariable Long id,
             HttpServletRequest httpRequest) {
-        ApiResponse response = codeService.deleteCode(id);
+        final ApiResponse response = codeService.deleteCode(id);
         return ResponseUtils.buildResponse(httpRequest, response);
     }
 }

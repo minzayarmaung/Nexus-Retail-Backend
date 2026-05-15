@@ -20,6 +20,9 @@ public class Permission {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, unique = true)
+    private String code;
+
     private String grouping;
 
     private String permission;
@@ -28,7 +31,7 @@ public class Permission {
     private String entityName;
 
     @Column(name = "action_name")
-    private String action_name;
+    private String actionName;
 
     @Column(name = "can_maker_checker")
     private boolean canMakerChecker;

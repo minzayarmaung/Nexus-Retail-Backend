@@ -7,7 +7,7 @@ import com.nexusretail.data.repositories.UserRepository;
 import com.nexusretail.feature.auth.dto.request.LoginRequest;
 import com.nexusretail.feature.auth.dto.response.LoginResponse;
 import com.nexusretail.feature.auth.service.AuthService;
-import com.nexusretail.security.Jwt.JwtUtils;
+import com.nexusretail.security.jwt.JwtUtils;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

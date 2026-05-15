@@ -1,4 +1,4 @@
-package com.nexusretail.security.Jwt;
+package com.nexusretail.security.jwt;
 
 import com.nexusretail.security.SecurityConstants;
 import com.nexusretail.security.UserDetailServiceImpl;
@@ -16,7 +16,6 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 @Component
 @RequiredArgsConstructor
