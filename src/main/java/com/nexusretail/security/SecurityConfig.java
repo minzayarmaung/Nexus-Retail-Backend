@@ -1,5 +1,6 @@
 package com.nexusretail.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nexusretail.security.jwt.JWTFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -23,6 +24,8 @@ import java.util.Arrays;
 public class SecurityConfig {
 
     private final JWTFilter jwtFilter;
+    private final CustomAccessDeniedHandler accessDeniedHandler;
+    private final CustomAuthenticationEntryPoint authenticationEntryPoint;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -40,6 +43,10 @@ public class SecurityConfig {
                     }
                     authz.anyRequest().authenticated();
                 })
+                .exceptionHandling(ex -> ex
+                        .accessDeniedHandler(accessDeniedHandler)
+                        .authenticationEntryPoint(authenticationEntryPoint)
+                )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
