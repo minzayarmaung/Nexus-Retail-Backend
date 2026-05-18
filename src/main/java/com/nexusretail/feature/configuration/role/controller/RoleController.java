@@ -1,7 +1,7 @@
 package com.nexusretail.feature.configuration.role.controller;
 
 import com.nexusretail.feature.configuration.role.dto.request.RoleRequest;
-import com.nexusretail.feature.configuration.role.dto.response.RoleResponse;
+import com.nexusretail.feature.configuration.role.dto.response.RolePermissionResponse;
 import com.nexusretail.feature.configuration.role.service.RoleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -33,8 +33,8 @@ public class RoleController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "Forbidden"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "500", description = "Internal Server Error")
     })
-    public ResponseEntity<Collection<RoleResponse>> retrieveAllRoles(HttpServletRequest request){
-        final Collection<RoleResponse> roles = roleService.retrieveAllRoles(request);
+    public ResponseEntity<Collection<RolePermissionResponse>> retrieveAllRoles(HttpServletRequest request){
+        final Collection<RolePermissionResponse> roles = roleService.retrieveAllRoles(request);
         return ResponseEntity.ok().body(roles);
     }
 
@@ -49,8 +49,24 @@ public class RoleController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Role Not Found"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "500", description = "Internal Server Error")
     })
-    public ResponseEntity<RoleResponse> retrieveRoleById(@PathVariable Long id, HttpServletRequest request){
-        final RoleResponse role = this.roleService.retrieveRoleById(id, request);
+    public ResponseEntity<RolePermissionResponse> retrieveRoleById(@PathVariable Long id, HttpServletRequest request){
+        final RolePermissionResponse role = this.roleService.retrieveRoleById(id, request);
+        return ResponseEntity.ok().body(role);
+    }
+
+    @PreAuthorize("hasPermission(null, 'READ_ROLE')")
+    @GetMapping("/{id}/permissions")
+    @Operation(summary = "Get Role Permissions by ID", description = "Example Requests:\n" + "\n" + "roles/1/permissions\n" + "\n" + "\n" + "roles/1?fields=name")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Role Permissions retrieved successfully"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Bad Request"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "Forbidden"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Role Not Found"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "500", description = "Internal Server Error")
+    })
+    public ResponseEntity<RolePermissionResponse> retrieveRolePermissionByRoleId(@PathVariable Long id, HttpServletRequest request){
+        final RolePermissionResponse role = this.roleService.retrieveRolePermissionsByRoleId(id, request);
         return ResponseEntity.ok().body(role);
     }
 
@@ -64,8 +80,8 @@ public class RoleController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "Forbidden"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "500", description = "Internal Server Error")
     })
-    public ResponseEntity<RoleResponse> createRole(@RequestBody RoleRequest roleRequest){
-        final RoleResponse response = this.roleService.createRole(roleRequest);
+    public ResponseEntity<RolePermissionResponse> createRole(@RequestBody RoleRequest roleRequest){
+        final RolePermissionResponse response = this.roleService.createRole(roleRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -80,9 +96,9 @@ public class RoleController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Role Not Found"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "500", description = "Internal Server Error")
     })
-    public ResponseEntity<RoleResponse> updateRole(@PathVariable Long id, @RequestBody RoleRequest roleRequest
+    public ResponseEntity<RolePermissionResponse> updateRole(@PathVariable Long id, @RequestBody RoleRequest roleRequest
     ) {
-        final RoleResponse response = roleService.updateRole(id, roleRequest);
+        final RolePermissionResponse response = roleService.updateRole(id, roleRequest);
         return ResponseEntity.ok(response);
     }
 

@@ -16,5 +16,8 @@ public record CodeResponse(
         String description,
 
         @Schema(description = "Status", example = "ACTIVE")
-        String status
+        String status,
+
+        @Schema(description = "Selected", example = "true")
+        boolean selected
 ) {}

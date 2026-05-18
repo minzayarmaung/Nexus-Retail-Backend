@@ -1,12 +1,12 @@
 package com.nexusretail.feature.configuration.role.service.impl;
 
-import com.nexusretail.data.models.Permission;
 import com.nexusretail.data.models.Role;
-import com.nexusretail.data.models.RolePermission;
+import com.nexusretail.data.repositories.PermissionRepository;
 import com.nexusretail.data.repositories.RolePermissionRepository;
 import com.nexusretail.data.repositories.RoleRepository;
+import com.nexusretail.feature.configuration.permission.dto.response.PermissionResponse;
 import com.nexusretail.feature.configuration.role.dto.request.RoleRequest;
-import com.nexusretail.feature.configuration.role.dto.response.RoleResponse;
+import com.nexusretail.feature.configuration.role.dto.response.RolePermissionResponse;
 import com.nexusretail.feature.configuration.role.service.RoleService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -25,9 +26,10 @@ public class RoleServiceImpl implements RoleService {
 
     private final RoleRepository roleRepository;
     private final RolePermissionRepository rolePermissionRepository;
+    private final PermissionRepository permissionRepository;
 
     @Override
-    public Collection<RoleResponse> retrieveAllRoles(HttpServletRequest request) {
+    public Collection<RolePermissionResponse> retrieveAllRoles(HttpServletRequest request) {
         return roleRepository.findAll()
                 .stream()
                 .map(this::mapToRoleResponse)
@@ -35,21 +37,37 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public RoleResponse retrieveRoleById(Long id, HttpServletRequest request) {
+    public RolePermissionResponse retrieveRoleById(Long id, HttpServletRequest request) {
         Role role = roleRepository.findById(id)
                 .orElseThrow(() ->
                         new EntityNotFoundException("Role not found with id: " + id));
 
-        List<Permission> permissions = rolePermissionRepository.findByRole(role)
-                .stream()
-                .map(RolePermission::getPermission)
-                .toList();
-
-        return mapToRolePermissionResponse(role , permissions);
+        return mapToRoleResponse(role);
     }
 
     @Override
-    public RoleResponse createRole(RoleRequest request) {
+    public RolePermissionResponse retrieveRolePermissionsByRoleId(Long id, HttpServletRequest request) {
+        Role role = roleRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Role not found with id: " + id));
+
+        Set<Long> assignedPermissionIds = rolePermissionRepository.findPermissionIdsByRoleId(id);
+
+        List<PermissionResponse> permissionResponses = permissionRepository.findAllOrderedByGrouping()
+                .stream()
+                .map(permission -> PermissionResponse.builder()
+                        .grouping(permission.getGrouping())
+                        .code(permission.getCode())
+                        .entityName(permission.getEntityName())
+                        .actionName(permission.getActionName())
+                        .selected(assignedPermissionIds.contains(permission.getId()))
+                        .build())
+                .toList();
+
+        return mapToRolePermissionResponse(role, permissionResponses);
+    }
+
+    @Override
+    public RolePermissionResponse createRole(RoleRequest request) {
 
         try {
             if (roleRepository.existsByName(request.name())) {
@@ -76,7 +94,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public RoleResponse updateRole(Long id, RoleRequest request) {
+    public RolePermissionResponse updateRole(Long id, RoleRequest request) {
         try {
 
             Role role = roleRepository.findById(id)
@@ -135,9 +153,9 @@ public class RoleServiceImpl implements RoleService {
         }
     }
 
-    private RoleResponse mapToRoleResponse(Role role) {
+    private RolePermissionResponse mapToRoleResponse(Role role) {
 
-        return RoleResponse.builder()
+        return RolePermissionResponse.builder()
                 .id(role.getId())
                 .name(role.getName())
                 .description(role.getDescription())
@@ -145,9 +163,9 @@ public class RoleServiceImpl implements RoleService {
                 .build();
     }
 
-    private RoleResponse mapToRolePermissionResponse(Role role, List<Permission> permissions) {
+    private RolePermissionResponse mapToRolePermissionResponse(Role role, List<PermissionResponse> permissions) {
 
-        return RoleResponse.builder()
+        return RolePermissionResponse.builder()
                 .id(role.getId())
                 .name(role.getName())
                 .description(role.getDescription())
