@@ -23,7 +23,7 @@ public class RoleController {
 
     private final RoleService roleService;
 
-    @PreAuthorize("hasPermission('READ_ROLE_PERMISSION')")
+    @PreAuthorize("hasPermission(null, 'READ_ROLE_PERMISSION')")
     @GetMapping
     @Operation(summary = "List Roles", description = "Example Requests:\n" + "\n" + "roles\n" + "\n" + "\n" + "roles?fields=name")
     @ApiResponses({
@@ -38,7 +38,7 @@ public class RoleController {
         return ResponseEntity.ok().body(roles);
     }
 
-    @PreAuthorize("hasPermission('READ_ROLE')")
+    @PreAuthorize("hasPermission(null, 'READ_ROLE')")
     @GetMapping("/{id}")
     @Operation(summary = "Get Role by ID", description = "Example Requests:\n" + "\n" + "roles/1\n" + "\n" + "\n" + "roles/1?fields=name")
     @ApiResponses({
@@ -54,7 +54,7 @@ public class RoleController {
         return ResponseEntity.ok().body(role);
     }
 
-    @PreAuthorize("hasPermission('CREATE_ROLE')")
+    @PreAuthorize("hasPermission(null, 'CREATE_ROLE')")
     @PostMapping
     @Operation(summary = "Create Role", description = "Example Requests:\n" + "\n" + "roles\n" + "\n" + "\n" + "roles?fields=name")
     @ApiResponses({
@@ -69,7 +69,7 @@ public class RoleController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @PreAuthorize("hasPermission('UPDATE_ROLE_PERMISSION')")
+    @PreAuthorize("hasPermission(null ,'UPDATE_ROLE_PERMISSION')")
     @PatchMapping("/{id}")
     @Operation(summary = "Update Role", description = "Example Requests:\n" + "\n" + "roles/1\n" + "\n" + "\n" + "roles/1?fields=name")
     @ApiResponses({
@@ -86,7 +86,7 @@ public class RoleController {
         return ResponseEntity.ok(response);
     }
 
-    @PreAuthorize("hasPermission('DELETE_ROLE')")
+    @PreAuthorize("hasPermission(null, 'DELETE_ROLE')")
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete Role", description = "Delete Role by Id")
     public ResponseEntity<String> deleteRole(@PathVariable Long id) {
