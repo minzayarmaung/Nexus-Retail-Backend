@@ -1,12 +1,16 @@
 package com.nexusretail.feature.configuration.role.service.impl;
 
+import com.nexusretail.data.models.Permission;
 import com.nexusretail.data.models.Role;
+import com.nexusretail.data.models.RolePermission;
 import com.nexusretail.data.repositories.PermissionRepository;
 import com.nexusretail.data.repositories.RolePermissionRepository;
 import com.nexusretail.data.repositories.RoleRepository;
 import com.nexusretail.feature.configuration.permission.dto.response.PermissionResponse;
 import com.nexusretail.feature.configuration.role.dto.request.RoleRequest;
+import com.nexusretail.feature.configuration.role.dto.request.UpdateRolePermissionsRequest;
 import com.nexusretail.feature.configuration.role.dto.response.RolePermissionResponse;
+import com.nexusretail.feature.configuration.role.dto.response.RolePermissionUpdateResponse;
 import com.nexusretail.feature.configuration.role.service.RoleService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,10 +18,11 @@ import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -64,6 +69,70 @@ public class RoleServiceImpl implements RoleService {
                 .toList();
 
         return mapToRolePermissionResponse(role, permissionResponses);
+    }
+
+    @Override
+    @Transactional
+    public RolePermissionUpdateResponse updateRolePermissions(Long id, UpdateRolePermissionsRequest request) {
+
+        Role role = roleRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Role not found with id: " + id));
+
+        Set<String> incomingCodes = request.permissions().keySet();
+
+        Map<String, Permission> permissionsByCode = permissionRepository.findAllByCodes(incomingCodes)
+                .stream()
+                .collect(Collectors.toMap(Permission::getCode, Function.identity()));
+
+        Set<String> unknownCodes = incomingCodes.stream()
+                .filter(code -> !permissionsByCode.containsKey(code))
+                .collect(Collectors.toSet());
+
+        if (!unknownCodes.isEmpty()) {
+            throw new IllegalArgumentException("Unknown permission codes: " + unknownCodes);
+        }
+
+        Map<Long, RolePermission> existingByPermissionId = rolePermissionRepository.findAllByRoleId(id)
+                .stream()
+                .collect(Collectors.toMap(rp -> rp.getPermission().getId(), Function.identity()));
+
+        Map<String, Boolean> changes = new LinkedHashMap<>();
+
+        List<RolePermission> toAdd   = new ArrayList<>();
+        Set<Long>           toRemove = new HashSet<>();
+
+        for (Map.Entry<String, Boolean> entry : request.permissions().entrySet()) {
+            String     code       = entry.getKey();
+            boolean    selected   = entry.getValue();
+            Permission permission = permissionsByCode.get(code);
+            boolean    alreadyHas = existingByPermissionId.containsKey(permission.getId());
+
+            if (selected && !alreadyHas) {
+                toAdd.add(RolePermission.builder()
+                        .role(role)
+                        .permission(permission)
+                        .build());
+                changes.put(code, true);
+
+            } else if (!selected && alreadyHas) {
+                toRemove.add(permission.getId());
+                changes.put(code, false);
+            }
+        }
+
+        if (!toAdd.isEmpty()) {
+            rolePermissionRepository.saveAll(toAdd);
+        }
+
+        if (!toRemove.isEmpty()) {
+            rolePermissionRepository.deleteByRoleIdAndPermissionIds(id, toRemove);
+        }
+
+        return new RolePermissionUpdateResponse(
+                role.getId(),
+                role.getName(),
+                new RolePermissionUpdateResponse.Changes(changes)
+        );
     }
 
     @Override

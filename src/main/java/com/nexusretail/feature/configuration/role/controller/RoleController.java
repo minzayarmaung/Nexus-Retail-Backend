@@ -1,12 +1,15 @@
 package com.nexusretail.feature.configuration.role.controller;
 
 import com.nexusretail.feature.configuration.role.dto.request.RoleRequest;
+import com.nexusretail.feature.configuration.role.dto.request.UpdateRolePermissionsRequest;
 import com.nexusretail.feature.configuration.role.dto.response.RolePermissionResponse;
+import com.nexusretail.feature.configuration.role.dto.response.RolePermissionUpdateResponse;
 import com.nexusretail.feature.configuration.role.service.RoleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -99,6 +102,25 @@ public class RoleController {
     public ResponseEntity<RolePermissionResponse> updateRole(@PathVariable Long id, @RequestBody RoleRequest roleRequest
     ) {
         final RolePermissionResponse response = roleService.updateRole(id, roleRequest);
+        return ResponseEntity.ok(response);
+    }
+
+    @PreAuthorize("hasPermission(null ,'UPDATE_ROLE_PERMISSION')")
+    @PatchMapping("/{id}/permissions")
+    @Operation(summary = "Update Role Permissions", description = "Example Requests:\n" + "\n" + "roles/1\n" + "\n" + "\n" + "roles/1/permissions")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Role Permissions updated successfully"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode   = "400", description = "Bad Request"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "Forbidden"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Role Not Found"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "500", description = "Internal Server Error")
+    })
+    public ResponseEntity<RolePermissionUpdateResponse> updateRolePermissions(
+            @PathVariable Long id,
+            @RequestBody @Valid UpdateRolePermissionsRequest request) {
+
+        final RolePermissionUpdateResponse response = this.roleService.updateRolePermissions(id, request);
         return ResponseEntity.ok(response);
     }
 
