@@ -6,9 +6,6 @@ public class SecurityConstants {
             "/nexusretail/api/v1/auth/login",
             "/nexusretail/api/v1/auth/logout",
 
-            "/nexusretail/api/v1/configuration/code-values/dropdown/**",
-            "/nexusretail/api/v1/configuration/**",
-
             // Swagger / OpenAPI v3
             "/v3/api-docs/**",
             "/v3/api-docs",

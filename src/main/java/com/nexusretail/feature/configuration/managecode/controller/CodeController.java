@@ -21,7 +21,7 @@ public class CodeController {
 
     private final CodeService codeService;
 
-    @PreAuthorize("hasPermission('CREATE_CODE')")
+    @PreAuthorize("hasPermission(null, 'CREATE_CODE')")
     @PostMapping
     @Operation(summary = "Create Code", description = "Create a new code type for dynamic dropdown")
     @ApiResponses(value = {
@@ -32,11 +32,11 @@ public class CodeController {
     public ResponseEntity<ApiResponse> createCode(
             @RequestBody CodeRequest request,
             HttpServletRequest httpRequest) {
-        ApiResponse response = codeService.createCode(request);
+        ApiResponse response = this.codeService.createCode(request);
         return ResponseUtils.buildResponse(httpRequest, response);
     }
 
-    @PreAuthorize("hasPermission('READ_CODE')")
+    @PreAuthorize("hasPermission(null, 'READ_CODE')")
     @GetMapping
     @Operation(summary = "Get All Codes", description = "Retrieve all code types")
     @ApiResponses(value = {
@@ -44,11 +44,11 @@ public class CodeController {
         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "500", description = "Internal server error")
     })
     public ResponseEntity<ApiResponse> getAllCodes(HttpServletRequest httpRequest) {
-        ApiResponse response = codeService.getAllCodes();
+        ApiResponse response = this.codeService.getAllCodes();
         return ResponseUtils.buildResponse(httpRequest, response);
     }
 
-    @PreAuthorize("hasPermission('READ_CODE')")
+    @PreAuthorize("hasPermission(null, 'READ_CODE')")
     @GetMapping("/{id}")
     @Operation(summary = "Get Code by ID", description = "Retrieve code details by ID")
     @ApiResponses(value = {
@@ -59,11 +59,11 @@ public class CodeController {
     public ResponseEntity<ApiResponse> getCodeById(
             @PathVariable Long id,
             HttpServletRequest httpRequest) {
-        ApiResponse response = codeService.getCodeById(id);
+        ApiResponse response = this.codeService.getCodeById(id);
         return ResponseUtils.buildResponse(httpRequest, response);
     }
 
-    @PreAuthorize("hasPermission('READ_CODE')")
+    @PreAuthorize("hasPermission(null, 'READ_CODE')")
     @GetMapping("/type/{codeType}")
     @Operation(summary = "Get Code by Type", description = "Retrieve code details by code type")
     @ApiResponses(value = {
@@ -74,11 +74,11 @@ public class CodeController {
     public ResponseEntity<ApiResponse> getCodeByType(
             @PathVariable String codeType,
             HttpServletRequest httpRequest) {
-        ApiResponse response = codeService.getCodeByType(codeType);
+        ApiResponse response = this.codeService.getCodeByType(codeType);
         return ResponseUtils.buildResponse(httpRequest, response);
     }
 
-    @PreAuthorize("hasPermission('UPDATE_CODE')")
+    @PreAuthorize("hasPermission(null, 'UPDATE_CODE')")
     @PutMapping("/{id}")
     @Operation(summary = "Update Code", description = "Update code details")
     @ApiResponses(value = {
@@ -91,11 +91,11 @@ public class CodeController {
             @PathVariable Long id,
             @RequestBody CodeRequest request,
             HttpServletRequest httpRequest) {
-        ApiResponse response = codeService.updateCode(id, request);
+        ApiResponse response = this.codeService.updateCode(id, request);
         return ResponseUtils.buildResponse(httpRequest, response);
     }
 
-    @PreAuthorize("hasPermission('DELETE_CODE')")
+    @PreAuthorize("hasPermission(null, 'DELETE_CODE')")
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete Code", description = "Delete a code and all its values")
     @ApiResponses(value = {
@@ -106,7 +106,7 @@ public class CodeController {
     public ResponseEntity<ApiResponse> deleteCode(
             @PathVariable Long id,
             HttpServletRequest httpRequest) {
-        final ApiResponse response = codeService.deleteCode(id);
+        final ApiResponse response = this.codeService.deleteCode(id);
         return ResponseUtils.buildResponse(httpRequest, response);
     }
 }

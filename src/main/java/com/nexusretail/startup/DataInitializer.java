@@ -1,7 +1,10 @@
 package com.nexusretail.startup;
 
 import com.nexusretail.data.models.Role;
+import com.nexusretail.data.models.RolePermission;
 import com.nexusretail.data.models.User;
+import com.nexusretail.data.repositories.PermissionRepository;
+import com.nexusretail.data.repositories.RolePermissionRepository;
 import com.nexusretail.data.repositories.RoleRepository;
 import com.nexusretail.data.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,33 +20,27 @@ public class DataInitializer implements CommandLineRunner {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final PermissionRepository permissionRepository;
+    private final RolePermissionRepository rolePermissionRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
     public void run(String... args) throws Exception {
         log.info("Initializing system data...");
 
-        // Create roles
         createRoles();
 
-        // Create system admin user if it doesn't exist
         createSystemAdminUser();
+
+        createRolePermissions();
 
         log.info("Data initialization completed successfully");
     }
 
     private void createRoles() {
-        // SYSTEM_ADMIN role (global, no shopId)
         createRoleIfNotExists("SYSTEM_ADMIN", null);
 
-        // OWNER role (will be created per shop)
-        createRoleIfNotExists("OWNER", null); // Template role, actual owners will have shopId
-
-        // HR role (will be created per shop)
-        createRoleIfNotExists("HR", null); // Template role, actual HR will have shopId
-
-        // SALESPERSON role (will be created per shop)
-        createRoleIfNotExists("SALESPERSON", null); // Template role, actual salespeople will have shopId
+        createRoleIfNotExists("OWNER", null);
 
         log.info("All system roles initialized");
     }
@@ -78,5 +75,35 @@ public class DataInitializer implements CommandLineRunner {
         } else {
             log.info("System admin user already exists");
         }
+    }
+
+    public void createRolePermissions() {
+
+        var permissionOpt = permissionRepository.findByCode("ALL_FUNCTIONS");
+
+        if (permissionOpt.isEmpty()) {
+            log.warn("Permission ALL_FUNCTIONS not found");
+            return;
+        }
+
+        Role adminRole = roleRepository.findByName("SYSTEM_ADMIN")
+                .orElseThrow(() -> new RuntimeException("SYSTEM_ADMIN role not found"));
+
+        boolean exists = rolePermissionRepository
+                .existsByRoleAndPermission(adminRole, permissionOpt.get());
+
+        if (exists) {
+            log.info("Role permission already exists");
+            return;
+        }
+
+        RolePermission rolePermission = RolePermission.builder()
+                .role(adminRole)
+                .permission(permissionOpt.get())
+                .build();
+
+        rolePermissionRepository.save(rolePermission);
+
+        log.info("Role permission created");
     }
 }

@@ -106,7 +106,6 @@ public class JwtUtils {
         return resolver.apply(getAllClaimsFromToken(token));
     }
 
-    // ✅ Modern JJWT API — replaces deprecated parser().setSigningKey().parseClaimsJws()
     private Claims getAllClaimsFromToken(String token) {
         return Jwts.parser()
                 .verifyWith(getSigningKey())

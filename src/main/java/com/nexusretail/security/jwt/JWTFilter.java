@@ -45,11 +45,10 @@ public class JWTFilter extends OncePerRequestFilter {
         if(token == null){
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("""
-                    Missing Token. Please Inform Authorized Person.
+                    Unauthorized.
                     """);
             return;
         }
-
         try{
             String email = jwtUtil.extractEmail(token);
 
@@ -81,6 +80,4 @@ public class JWTFilter extends OncePerRequestFilter {
         }
         filterChain.doFilter(request, response);
     }
-
-
 }
