@@ -28,14 +28,23 @@ public class User extends Auditable {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = true)
-    private Long shopId;
+    @Column(nullable = false)
+    private String firstName;
 
     @Column(nullable = false)
-    private String phoneNo;
+    private String lastName;
 
-     @ManyToOne
-     @JoinColumn(name = "role_id", referencedColumnName = "id")
-     private Role role;
+    @Column(nullable = true)
+    private boolean isFirstTimeLogin;
+
+    @Column(nullable = true)
+    private boolean isExpired;
+
+    @Column(nullable = true)
+    private boolean cannotChangePassword;
+
+    @ManyToOne
+    @JoinColumn(name = "role_id", referencedColumnName = "id")
+    private Role role;
 
 }

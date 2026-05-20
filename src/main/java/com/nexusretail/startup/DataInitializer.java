@@ -64,10 +64,11 @@ public class DataInitializer implements CommandLineRunner {
 
             User adminUser = User.builder()
                     .username("nexus")
+                    .firstName("first")
+                    .lastName("last")
                     .email("nexusretail@gmail.com")
                     .password(passwordEncoder.encode("password"))
                     .role(adminRole)
-                    .phoneNo("+1234567890")
                     .build();
 
             userRepository.save(adminUser);

@@ -2,6 +2,7 @@ package com.nexusretail.feature.user.controller;
 
 import com.nexusretail.common.dto.ResponseUtils;
 import com.nexusretail.common.dto.response.ApiResponse;
+import com.nexusretail.common.utils.PasswordGenerator;
 import com.nexusretail.data.repositories.UserRepository;
 import com.nexusretail.feature.user.dto.request.UserCreateRequest;
 import com.nexusretail.feature.user.service.UserService;
@@ -12,10 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("${api.base.path}/users")
@@ -37,5 +35,31 @@ public class UserController {
     public ResponseEntity<ApiResponse> createUser(@RequestBody UserCreateRequest userCreateRequest , HttpServletRequest request){
         final ApiResponse response = this.userService.createUser(userCreateRequest);
         return ResponseUtils.buildResponse(request , response);
+    }
+
+    @PreAuthorize("hasPermission(null, 'CREATE_USER')")
+    @PostMapping("/check-username")
+    @Operation(summary = "Check Username Availability", description = "Check if a username is available for registration")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Username already exists"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid input"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public ResponseEntity<Boolean> checkUsername(@RequestParam String username) {
+        if (username == null || username.isBlank()) {
+            return ResponseEntity.badRequest().body(false);
+        }
+        return ResponseEntity.ok(this.userService.checkUsername(username));
+    }
+
+    @PreAuthorize("hasPermission(null, 'CREATE_USER')")
+    @GetMapping("generate-password")
+    @Operation(summary = "Generate Password", description = "Generate a random password")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Password generated successfully"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public String generatePassword(@RequestParam String username) {
+        return this.userService.generatePassword(username);
     }
 }

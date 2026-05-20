@@ -7,4 +7,8 @@ import org.springframework.stereotype.Service;
 @Service
 public interface UserService {
     ApiResponse createUser(UserCreateRequest userCreateRequest);
+
+    Boolean checkUsername(String username);
+
+    String generatePassword(String username);
 }
