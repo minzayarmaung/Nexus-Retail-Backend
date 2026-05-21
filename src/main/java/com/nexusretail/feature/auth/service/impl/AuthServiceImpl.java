@@ -29,9 +29,8 @@ public class AuthServiceImpl implements AuthService {
     private final UserDetailsService userDetailsService;
 
     @Override
-    public ApiResponse loginUser(LoginRequest loginRequest,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response) {
+    public ApiResponse loginUser(LoginRequest loginRequest, HttpServletRequest request, HttpServletResponse response) {
+
         if ((loginRequest.username() == null || loginRequest.username().isBlank()) &&
                 (loginRequest.email()    == null || loginRequest.email().isBlank())) {
             return ResponseUtils.createErrorResponse("Username or email is required", 400);
@@ -51,6 +50,10 @@ public class AuthServiceImpl implements AuthService {
             return ResponseUtils.createErrorResponse("Invalid credentials", 401);
         }
 
+        if(user.isExpired()){
+            return ResponseUtils.createErrorResponse("User account is expired. Please contact administrator.", 403);
+        }
+
         String accessToken  = jwtUtils.generateToken(user);
         String refreshToken = jwtUtils.generateRefreshToken(user.getEmail());
 
@@ -63,6 +66,8 @@ public class AuthServiceImpl implements AuthService {
         LoginResponse loginResponse = LoginResponse.builder()
                 .token(accessToken)
                 .username(user.getUsername())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
                 .email(user.getEmail())
                 .role(user.getRole().getName())
                 .userId(user.getId())

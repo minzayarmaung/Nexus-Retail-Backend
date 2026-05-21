@@ -11,4 +11,6 @@ public interface UserService {
     Boolean checkUsername(String username);
 
     String generatePassword(String username);
+
+    String suspendUser(Long id);
 }

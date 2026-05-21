@@ -61,4 +61,16 @@ public class UserController {
     public String generatePassword(@RequestParam String username) {
         return this.userService.generatePassword(username);
     }
+
+    @PreAuthorize("hasPermission(null, 'SUSPEND_USER')")
+    @PostMapping("/suspend/{id}")
+    @Operation(summary = "Suspend User", description = "Suspend a user account")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "User suspended successfully"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid user ID"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public String suspendUser(@PathVariable Long id, HttpServletRequest request) {
+        return this.userService.suspendUser(id);
+    }
 }

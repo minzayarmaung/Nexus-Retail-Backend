@@ -2,6 +2,7 @@ package com.nexusretail.feature.user.service.impl;
 
 import com.nexusretail.common.dto.response.ApiResponse;
 import com.nexusretail.common.exception.EmailAlreadyExistsException;
+import com.nexusretail.common.exception.UserNotFoundException;
 import com.nexusretail.common.service.impl.BrevoEmailService;
 import com.nexusretail.common.utils.PasswordGenerator;
 import com.nexusretail.data.models.User;
@@ -27,12 +28,12 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public ApiResponse createUser(UserCreateRequest userCreateRequest) {
         userRepository.findByEmail(userCreateRequest.email())
-                .ifPresent(user -> {
-                    throw new EmailAlreadyExistsException("Email already exists");
+                .ifPresent(existingUser -> {
+                    throw new EmailAlreadyExistsException("Email already exists: " + userCreateRequest.email());
                 });
 
-        User user = new User();
         String message = "User Created Successfully";
+        User user = new User();
         String generatedPassword = "";
         if(userCreateRequest.generatePassword()){
             generatedPassword = PasswordGenerator.generate(userCreateRequest.username());
@@ -79,5 +80,16 @@ public class UserServiceImpl implements UserService {
             return PasswordGenerator.generate();
         }
         return PasswordGenerator.generate(username);
+    }
+
+    @Override
+    public String suspendUser(Long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
+        if(user.isExpired()) {
+            return "User with id " + id + " is already suspended.";
+        }
+        user.setExpired(true);
+        userRepository.save(user);
+        return "User with id " + id + " has been suspended successfully.";
     }
 }

@@ -12,6 +12,12 @@ public record LoginResponse(
         @Schema(description = "User's username", example = "john_doe")
         String username,
 
+        @Schema(description = "User's first name", example = "John")
+        String firstName,
+
+        @Schema(description = "User's last name", example = "Doe")
+        String lastName,
+
         @Schema(description = "User's email address", example = "john@example.com")
         String email,
 
