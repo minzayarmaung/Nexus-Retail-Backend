@@ -166,9 +166,15 @@ public class JwtUtils {
         return null;
     }
 
+    /**
+     * Returns email from token, or null for generic parse errors.
+     * Does NOT catch ExpiredJwtException — let the filter handle it explicitly.
+     */
     public String extractEmail(String token) {
         try {
             return getEmailFromToken(token);
+        } catch (ExpiredJwtException e) {
+            throw e;
         } catch (Exception e) {
             log.error("Error extracting email from token: {}", e.getMessage());
             return null;

@@ -2,6 +2,7 @@ package com.nexusretail.feature.user.service.impl;
 
 import com.nexusretail.common.dto.response.ApiResponse;
 import com.nexusretail.common.exception.EmailAlreadyExistsException;
+import com.nexusretail.common.service.impl.BrevoEmailService;
 import com.nexusretail.common.utils.PasswordGenerator;
 import com.nexusretail.data.models.User;
 import com.nexusretail.data.repositories.UserRepository;
@@ -9,8 +10,10 @@ import com.nexusretail.feature.user.dto.request.UserCreateRequest;
 import com.nexusretail.feature.user.dto.response.UserCreateResponse;
 import com.nexusretail.feature.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,15 +21,24 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final BrevoEmailService mailSender;
 
     @Override
+    @Transactional
     public ApiResponse createUser(UserCreateRequest userCreateRequest) {
-        User user = userRepository.findByEmail(userCreateRequest.email())
-                .orElseThrow(() -> new EmailAlreadyExistsException("Email already exists"));
+        userRepository.findByEmail(userCreateRequest.email())
+                .ifPresent(user -> {
+                    throw new EmailAlreadyExistsException("Email already exists");
+                });
 
+        User user = new User();
+        String message = "User Created Successfully";
+        String generatedPassword = "";
         if(userCreateRequest.generatePassword()){
-            String generatedPassword = PasswordGenerator.generate(userCreateRequest.username());
+            generatedPassword = PasswordGenerator.generate(userCreateRequest.username());
             user.setPassword(passwordEncoder.encode(generatedPassword));
+            mailSender.sendEmail(userCreateRequest.username() , userCreateRequest.email() , generatedPassword);
+            message = "User Created Successfully with Generated Password. Please check your email for the password.";
         } else {
             user.setPassword(passwordEncoder.encode(userCreateRequest.password()));
         }
@@ -47,8 +59,9 @@ public class UserServiceImpl implements UserService {
 
         return ApiResponse.builder()
                 .success(1)
+                .code(HttpStatus.CREATED.value())
                 .data(response)
-                .message("User created successfully")
+                .message(message)
                 .build();
     }
 

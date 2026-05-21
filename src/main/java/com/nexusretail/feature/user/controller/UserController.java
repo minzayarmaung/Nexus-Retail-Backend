@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Users", description = "User management APIs")
 public class UserController {
 
-    private final UserRepository userRepository;
     private final UserService userService;
 
     @PreAuthorize("hasPermission(null, 'CREATE_USER')")
@@ -34,7 +33,7 @@ public class UserController {
     })
     public ResponseEntity<ApiResponse> createUser(@RequestBody UserCreateRequest userCreateRequest , HttpServletRequest request){
         final ApiResponse response = this.userService.createUser(userCreateRequest);
-        return ResponseUtils.buildResponse(request , response);
+        return ResponseEntity.ok(response);
     }
 
     @PreAuthorize("hasPermission(null, 'CREATE_USER')")
