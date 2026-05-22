@@ -43,6 +43,8 @@ public class User extends Auditable {
     @Column(nullable = true)
     private boolean cannotChangePassword;
 
+    private boolean generatedPassword;
+
     @ManyToOne
     @JoinColumn(name = "role_id", referencedColumnName = "id")
     private Role role;

@@ -25,5 +25,11 @@ public record LoginResponse(
         String role,
 
         @Schema(description = "User's unique identifier", example = "1")
-        Long userId
+        Long userId,
+
+        @Schema(description = "" , example = "")
+        boolean isFirstTimeLogin,
+
+        @Schema(description = "", example = "")
+        boolean isGeneratePassword
 ) {}
