@@ -13,6 +13,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.util.Set;
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -68,7 +70,7 @@ public class DataInitializer implements CommandLineRunner {
                     .lastName("last")
                     .email("nexusretail@gmail.com")
                     .password(passwordEncoder.encode("password"))
-                    .role(adminRole)
+                    .roles(Set.of(adminRole))
                     .build();
 
             userRepository.save(adminUser);
@@ -91,17 +93,14 @@ public class DataInitializer implements CommandLineRunner {
                 .orElseThrow(() -> new RuntimeException("SYSTEM_ADMIN role not found"));
 
         boolean exists = rolePermissionRepository
-                .existsByRoleAndPermission(adminRole, permissionOpt.get());
+                .existsByRoleIdAndPermissionId(adminRole.getId(), permissionOpt.get().getId()); // ← match @IdClass fields
 
         if (exists) {
             log.info("Role permission already exists");
             return;
         }
 
-        RolePermission rolePermission = RolePermission.builder()
-                .role(adminRole)
-                .permission(permissionOpt.get())
-                .build();
+        RolePermission rolePermission = RolePermission.of(adminRole, permissionOpt.get()); // ← use factory, not builder
 
         rolePermissionRepository.save(rolePermission);
 

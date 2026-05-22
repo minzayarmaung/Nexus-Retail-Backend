@@ -32,19 +32,23 @@ public class UserDetailServiceImpl implements UserDetailsService {
 
         List<GrantedAuthority> authorities = new ArrayList<>();
 
-        authorities.add(new SimpleGrantedAuthority("ROLE_" + user.getRole().getName()));
+        user.getRoles()
+                .stream()
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName()))
+                .forEach(authorities::add);
 
-        rolePermissionRepository.findByRole(user.getRole())
+        rolePermissionRepository.findByRoleIn(user.getRoles())
                 .stream()
                 .map(RolePermission::getPermission)
                 .map(permission -> new SimpleGrantedAuthority(permission.getCode()))
+                .distinct()
                 .forEach(authorities::add);
 
         return org.springframework.security.core.userdetails.User
                 .withUsername(user.getEmail())
                 .password(user.getPassword())
                 .authorities(authorities)
-                .accountExpired(false)
+                .accountExpired(user.isExpired())
                 .accountLocked(false)
                 .credentialsExpired(false)
                 .disabled(false)

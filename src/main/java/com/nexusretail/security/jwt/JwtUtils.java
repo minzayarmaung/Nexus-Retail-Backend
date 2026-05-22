@@ -48,7 +48,7 @@ public class JwtUtils {
     /** Full token with role, userId, username, email claims — used at login */
     public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("role",     user.getRole().getName());
+        claims.put("roles",     user.getRoles());
         claims.put("userId",   user.getId());
         claims.put("username", user.getUsername());
         claims.put("email",    user.getEmail());

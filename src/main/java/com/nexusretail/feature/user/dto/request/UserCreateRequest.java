@@ -1,7 +1,10 @@
 package com.nexusretail.feature.user.dto.request;
 
+import com.nexusretail.data.models.Role;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
+
+import java.util.List;
 
 @Builder
 public record UserCreateRequest(
@@ -25,5 +28,8 @@ public record UserCreateRequest(
         boolean generatePassword,
 
         @Schema(description = "Flag to indicate if user can change password", example = "false", nullable = false)
-        boolean cannotChangePassword
+        boolean cannotChangePassword,
+
+        @Schema(description = "User Roles" , example = "false" , nullable = false)
+        List<String> roles
 ) {}

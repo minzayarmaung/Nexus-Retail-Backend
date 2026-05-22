@@ -1,7 +1,10 @@
 package com.nexusretail.feature.auth.dto.response;
 
+import com.nexusretail.data.models.Role;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
+
+import java.util.List;
 
 @Builder
 @Schema(description = "Login response payload")
@@ -22,7 +25,7 @@ public record LoginResponse(
         String email,
 
         @Schema(description = "User's role in the system", example = "ADMIN")
-        String role,
+        List<String> roles,
 
         @Schema(description = "User's unique identifier", example = "1")
         Long userId,

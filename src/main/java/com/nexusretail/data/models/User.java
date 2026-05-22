@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Getter
 @Setter
@@ -15,7 +18,8 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 @Table(name="users",indexes = {
-        @Index(name = "index_user_email", columnList = "email")
+        @Index(name = "index_user_email", columnList = "email"),
+        @Index(name = "index_username", columnList = "username")
 })
 public class User extends Auditable {
 
@@ -45,8 +49,11 @@ public class User extends Auditable {
 
     private boolean generatedPassword;
 
-    @ManyToOne
-    @JoinColumn(name = "role_id", referencedColumnName = "id")
-    private Role role;
-
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_role",
+            joinColumns        = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
 }

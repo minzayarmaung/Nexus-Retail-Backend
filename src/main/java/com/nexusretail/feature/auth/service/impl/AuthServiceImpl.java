@@ -4,6 +4,7 @@ import com.nexusretail.common.dto.ResponseUtils;
 import com.nexusretail.common.dto.response.ApiResponse;
 import com.nexusretail.common.exception.UserNotFoundException;
 import com.nexusretail.common.utils.PasswordValidator;
+import com.nexusretail.data.models.Role;
 import com.nexusretail.data.models.User;
 import com.nexusretail.data.repositories.UserRepository;
 import com.nexusretail.feature.auth.dto.request.LoginRequest;
@@ -21,6 +22,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -64,6 +68,11 @@ public class AuthServiceImpl implements AuthService {
             return ResponseUtils.createErrorResponse("User account is expired. Please contact administrator.", 403);
         }
 
+        List<String> roles = user.getRoles()
+                .stream()
+                .map(Role::getName)
+                .collect(Collectors.toList());
+
         String accessToken  = jwtUtils.generateToken(user);
         String refreshToken = jwtUtils.generateRefreshToken(user.getEmail());
 
@@ -79,7 +88,7 @@ public class AuthServiceImpl implements AuthService {
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .email(user.getEmail())
-                .role(user.getRole().getName())
+                .roles(roles)
                 .userId(user.getId())
                 .isFirstTimeLogin(user.isFirstTimeLogin())
                 .isGeneratePassword(user.isGeneratedPassword())

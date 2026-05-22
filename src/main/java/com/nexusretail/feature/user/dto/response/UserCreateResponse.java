@@ -3,6 +3,8 @@ package com.nexusretail.feature.user.dto.response;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
+import java.util.List;
+
 @Builder
 public record UserCreateResponse(
 
@@ -22,5 +24,8 @@ public record UserCreateResponse(
         boolean isFirstTimeLogin,
 
         @Schema(description = "Indicates if the authentication token is expired", example = "false")
-        boolean isExpired
+        boolean isExpired,
+
+        @Schema(description = "List Roles")
+        List<String> roles
 ) {}

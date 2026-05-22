@@ -108,10 +108,7 @@ public class RoleServiceImpl implements RoleService {
             boolean    alreadyHas = existingByPermissionId.containsKey(permission.getId());
 
             if (selected && !alreadyHas) {
-                toAdd.add(RolePermission.builder()
-                        .role(role)
-                        .permission(permission)
-                        .build());
+                toAdd.add(RolePermission.of(role, permission));
                 changes.put(code, true);
 
             } else if (!selected && alreadyHas) {

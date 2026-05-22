@@ -6,7 +6,9 @@ import com.nexusretail.common.exception.UserNotFoundException;
 import com.nexusretail.common.service.emailService.EmailEvent;
 import com.nexusretail.common.service.emailService.PasswordEmailRequest;
 import com.nexusretail.common.utils.PasswordGenerator;
+import com.nexusretail.data.models.Role;
 import com.nexusretail.data.models.User;
+import com.nexusretail.data.repositories.RoleRepository;
 import com.nexusretail.data.repositories.UserRepository;
 import com.nexusretail.feature.user.dto.request.UserCreateRequest;
 import com.nexusretail.feature.user.dto.response.UserCreateResponse;
@@ -18,12 +20,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RoleRepository roleRepository;
     private final ApplicationEventPublisher eventPublisher;
 
     @Override
@@ -63,12 +70,18 @@ public class UserServiceImpl implements UserService {
         }
         user.setCannotChangePassword(userCreateRequest.cannotChangePassword());
 
+        Set<Role> roles = resolveRoles(userCreateRequest.roles());
+        user.setRoles(roles);
+
         userRepository.save(user);
 
         UserCreateResponse response = UserCreateResponse.builder()
                 .userId(user.getId())
                 .username(user.getUsername())
                 .email(user.getEmail())
+                .roles(user.getRoles().stream()
+                        .map(Role::getName)
+                        .collect(Collectors.toList()))
                 .build();
 
         return ApiResponse.builder()
@@ -104,5 +117,18 @@ public class UserServiceImpl implements UserService {
         user.setExpired(true);
         userRepository.save(user);
         return "User with id " + id + " has been suspended successfully.";
+    }
+
+    private Set<Role> resolveRoles(List<String> roleNames) {
+        if (roleNames == null || roleNames.isEmpty()) {
+            Role defaultRole = roleRepository.findByName("USER")
+                    .orElseThrow(() -> new RuntimeException("Default role USER not found"));
+            return Set.of(defaultRole);
+        }
+
+        return roleNames.stream()
+                .map(name -> roleRepository.findByName(name)
+                        .orElseThrow(() -> new IllegalArgumentException("Role not found: " + name)))
+                .collect(Collectors.toSet());
     }
 }

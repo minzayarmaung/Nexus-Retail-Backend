@@ -34,7 +34,7 @@ public final class PermissionRegistry {
                 // User
                 new PermissionDefinition(CREATE_USER,"user", "Create User Data", "CREATE"),
                 new PermissionDefinition(UPDATE_USER,"user", "Update User Data", "UPDATE"),
-                new PermissionDefinition(DELETE_USER,"user", "Delete User Data", "Delete")
+                new PermissionDefinition(DELETE_USER,"user", "Delete User Data", "DELETE")
 
 
         );
