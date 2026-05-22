@@ -97,7 +97,6 @@ public class RoleServiceImpl implements RoleService {
                 .collect(Collectors.toMap(rp -> rp.getPermission().getId(), Function.identity()));
 
         Map<String, Boolean> changes = new LinkedHashMap<>();
-
         List<RolePermission> toAdd   = new ArrayList<>();
         Set<Long>           toRemove = new HashSet<>();
 
