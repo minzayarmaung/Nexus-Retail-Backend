@@ -29,7 +29,14 @@ public final class PermissionRegistry {
 
                 // Configuration – Role–Permission
                 new PermissionDefinition(READ_ROLE_PERMISSION,   "configuration", "Read Role Permission", "READ"),
-                new PermissionDefinition(UPDATE_ROLE_PERMISSION, "configuration", "Update Role Permissionb", "UPDATE")
+                new PermissionDefinition(UPDATE_ROLE_PERMISSION, "configuration", "Update Role Permissionb", "UPDATE"),
+
+                // User
+                new PermissionDefinition(CREATE_USER,"user", "Create User Data", "CREATE"),
+                new PermissionDefinition(UPDATE_USER,"user", "Update User Data", "UPDATE"),
+                new PermissionDefinition(DELETE_USER,"user", "Delete User Data", "Delete")
+
+
         );
     }
 }

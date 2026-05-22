@@ -24,4 +24,9 @@ public final class PermissionCode {
     // ─── Configuration : Role–Permission assignment ──────────────────────────
     public static final String READ_ROLE_PERMISSION   = "READ_ROLE_PERMISSION";
     public static final String UPDATE_ROLE_PERMISSION = "UPDATE_ROLE_PERMISSION";
+
+    // ─── User : User Management  ──────────────────────────
+    public static final String CREATE_USER = "CREATE_USER";
+    public static final String UPDATE_USER = "UPDATE_USER";
+    public static final String DELETE_USER = "DELETE_USER";
 }
