@@ -16,5 +16,5 @@ public interface AuthService {
 
     ApiResponse changePassword(Long id, String newPassword);
 
-    ApiResponse resetPasswordRequest(Long id, ResetPasswordRequest resetPasswordRequest);
+    ApiResponse resetPassword(Long id, ResetPasswordRequest resetPasswordRequest);
 }

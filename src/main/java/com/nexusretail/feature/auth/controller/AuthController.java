@@ -81,8 +81,13 @@ public class AuthController {
     }
 
     @PreAuthorize("hasPermission(null, 'UPDATE_USER')")
+    @PatchMapping
+    @Operation(summary = "Reset Password" , description = "Reset User Password")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200" , description = "Password Reset Successfully.")
+    })
     public ResponseEntity<ApiResponse> resetPassword(@PathVariable Long id , @RequestBody ResetPasswordRequest resetPasswordRequest, HttpServletRequest request){
-        final ApiResponse response = this.authService.resetPasswordRequest(id , resetPasswordRequest);
+        final ApiResponse response = this.authService.resetPassword(id , resetPasswordRequest);
         return ResponseUtils.buildResponse(request , response);
     }
 }

@@ -160,7 +160,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public ApiResponse resetPasswordRequest(Long id, ResetPasswordRequest resetPasswordRequest) {
+    public ApiResponse resetPassword(Long id, ResetPasswordRequest resetPasswordRequest) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
 
