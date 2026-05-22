@@ -2,11 +2,14 @@ package com.nexusretail.feature.auth.service.impl;
 
 import com.nexusretail.common.dto.ResponseUtils;
 import com.nexusretail.common.dto.response.ApiResponse;
+import com.nexusretail.common.exception.UserNotFoundException;
+import com.nexusretail.common.utils.PasswordValidator;
 import com.nexusretail.data.models.User;
 import com.nexusretail.data.repositories.UserRepository;
 import com.nexusretail.feature.auth.dto.request.LoginRequest;
 import com.nexusretail.feature.auth.dto.response.LoginResponse;
 import com.nexusretail.feature.auth.service.AuthService;
+import com.nexusretail.feature.auth.dto.request.ResetPasswordRequest;
 import com.nexusretail.security.jwt.JwtUtils;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -136,6 +139,50 @@ public class AuthServiceImpl implements AuthService {
             log.error("Token refresh failed: {}", e.getMessage());
             return ResponseUtils.createErrorResponse("Refresh token invalid or expired", 401);
         }
+    }
+
+    @Override
+    public ApiResponse changePassword(Long id, String newPassword) {
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
+        PasswordValidator.ValidationResult result = PasswordValidator.validate(
+                newPassword, user.getUsername()
+        );
+        if (!result.valid()) {
+            return ResponseUtils.createErrorResponse(
+                    String.join(" | ", result.errors()), 400
+            );
+        }
+        user.setGeneratedPassword(false);
+        user.setFirstTimeLogin(false);
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+        return ResponseUtils.createSuccessResponse("Change password successful", null);
+    }
+
+    @Override
+    public ApiResponse resetPasswordRequest(Long id, ResetPasswordRequest resetPasswordRequest) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
+
+        if (!passwordEncoder.matches(resetPasswordRequest.currentPassword(), user.getPassword())) {
+            return ResponseUtils.createErrorResponse("Invalid password", 401);
+        }
+
+        PasswordValidator.ValidationResult result = PasswordValidator.validate(
+                resetPasswordRequest.newPassword(), user.getUsername()
+        );
+        if (!result.valid()) {
+            return ResponseUtils.createErrorResponse(
+                    String.join(" | ", result.errors()), 400
+            );
+        }
+
+        user.setPassword(passwordEncoder.encode(resetPasswordRequest.newPassword()));
+        user.setFirstTimeLogin(false);
+        user.setGeneratedPassword(false);
+        userRepository.save(user);
+
+        return ResponseUtils.createSuccessResponse("Password reset successful", user.getUsername());
     }
 
     private void addCookie(HttpServletResponse response, String name,

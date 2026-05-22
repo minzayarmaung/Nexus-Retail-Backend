@@ -13,6 +13,4 @@ public interface UserService {
     String generatePassword(String username);
 
     String suspendUser(Long id);
-
-    String changePassword(Long id, String newPassword);
 }

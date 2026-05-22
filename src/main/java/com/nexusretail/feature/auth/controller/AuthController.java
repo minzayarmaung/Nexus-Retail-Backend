@@ -4,6 +4,7 @@ import com.nexusretail.common.dto.ResponseUtils;
 import com.nexusretail.common.dto.response.ApiResponse;
 import com.nexusretail.feature.auth.dto.request.LoginRequest;
 import com.nexusretail.feature.auth.service.AuthService;
+import com.nexusretail.feature.auth.dto.request.ResetPasswordRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -13,6 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -63,6 +65,24 @@ public class AuthController {
     public ResponseEntity<ApiResponse> refreshToken(HttpServletRequest request,
                                                     HttpServletResponse httpResponse) {
         final ApiResponse response = authService.refreshToken(request, httpResponse);
+        return ResponseUtils.buildResponse(request , response);
+    }
+
+    @PreAuthorize("hasPermission(null, 'UPDATE_USER')")
+    @PatchMapping("/change-password/{id}")
+    @Operation(summary = "Change Password", description = "Change User Password")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Password Updated successfully"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid user ID"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "500", description = "Internal server error")    })
+    public ResponseEntity<ApiResponse> changePassword(@PathVariable Long id ,@RequestParam String newPassword , HttpServletRequest request) {
+        final ApiResponse response = this.authService.changePassword(id , newPassword);
+        return ResponseUtils.buildResponse(request , response);
+    }
+
+    @PreAuthorize("hasPermission(null, 'UPDATE_USER')")
+    public ResponseEntity<ApiResponse> resetPassword(@PathVariable Long id , @RequestBody ResetPasswordRequest resetPasswordRequest, HttpServletRequest request){
+        final ApiResponse response = this.authService.resetPasswordRequest(id , resetPasswordRequest);
         return ResponseUtils.buildResponse(request , response);
     }
 }

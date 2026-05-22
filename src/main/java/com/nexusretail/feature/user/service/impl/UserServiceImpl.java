@@ -105,14 +105,4 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
         return "User with id " + id + " has been suspended successfully.";
     }
-
-    @Override
-    public String changePassword(Long id, String newPassword) {
-        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
-        user.setGeneratedPassword(false);
-        user.setFirstTimeLogin(false);
-        user.setPassword(passwordEncoder.encode(newPassword));
-        userRepository.save(user);
-        return "Password Updated Successfully";
-    }
 }

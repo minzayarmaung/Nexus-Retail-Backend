@@ -1,9 +1,6 @@
 package com.nexusretail.feature.user.controller;
 
-import com.nexusretail.common.dto.ResponseUtils;
 import com.nexusretail.common.dto.response.ApiResponse;
-import com.nexusretail.common.utils.PasswordGenerator;
-import com.nexusretail.data.repositories.UserRepository;
 import com.nexusretail.feature.user.dto.request.UserCreateRequest;
 import com.nexusretail.feature.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -72,16 +69,5 @@ public class UserController {
     })
     public String suspendUser(@PathVariable Long id, HttpServletRequest request) {
         return this.userService.suspendUser(id);
-    }
-
-    @PreAuthorize("hasPermission(null, 'UPDATE_USER')")
-    @PatchMapping("/change-password/{id}")
-    @Operation(summary = "Change Password", description = "Change User Password")
-    @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Password Updated successfully"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid user ID"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "500", description = "Internal server error")    })
-    public String changePassword(@PathVariable Long id ,@RequestParam String newPassword) {
-        return this.userService.changePassword(id , newPassword);
     }
 }

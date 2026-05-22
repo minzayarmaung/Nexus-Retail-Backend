@@ -2,6 +2,7 @@ package com.nexusretail.feature.auth.service;
 
 import com.nexusretail.common.dto.response.ApiResponse;
 import com.nexusretail.feature.auth.dto.request.LoginRequest;
+import com.nexusretail.feature.auth.dto.request.ResetPasswordRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Service;
@@ -12,4 +13,8 @@ public interface AuthService {
     ApiResponse logoutUser(HttpServletRequest request, HttpServletResponse response);
 
     ApiResponse refreshToken(HttpServletRequest request, HttpServletResponse httpResponse);
+
+    ApiResponse changePassword(Long id, String newPassword);
+
+    ApiResponse resetPasswordRequest(Long id, ResetPasswordRequest resetPasswordRequest);
 }
