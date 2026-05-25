@@ -11,6 +11,7 @@ import com.nexusretail.data.models.User;
 import com.nexusretail.data.repositories.RoleRepository;
 import com.nexusretail.data.repositories.UserRepository;
 import com.nexusretail.feature.user.dto.request.UserCreateRequest;
+import com.nexusretail.feature.user.dto.request.UserUpdateRequest;
 import com.nexusretail.feature.user.dto.response.UserCreateResponse;
 import com.nexusretail.feature.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -117,6 +119,56 @@ public class UserServiceImpl implements UserService {
         user.setExpired(true);
         userRepository.save(user);
         return "User with id " + id + " has been suspended successfully.";
+    }
+
+    @Override
+    public ApiResponse updateUser(UserUpdateRequest userUpdateRequest, Long id) {
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new UserNotFoundException("User not found with id: " + id));
+
+        if(userUpdateRequest.email() != null && !userUpdateRequest.email().equals(user.getEmail())) {
+            Optional<User> existingUserWithEmail = userRepository.findByEmail(userUpdateRequest.email());
+            if (existingUserWithEmail.isPresent() && !existingUserWithEmail.get().getId().equals(id)) {
+                throw new EmailAlreadyExistsException("Email already exists: " + userUpdateRequest.email());
+            }
+            user.setEmail(userUpdateRequest.email());
+        }
+
+        if(userUpdateRequest.username() != null && !userUpdateRequest.username().equals(user.getUsername())) {
+            Optional<User> existingUserWithUsername = userRepository.findByUsername(userUpdateRequest.username());
+            if (existingUserWithUsername.isPresent() && !existingUserWithUsername.get().getId().equals(id)) {
+                throw new IllegalArgumentException("Username already exists: " + userUpdateRequest.username());
+            }
+            user.setUsername(userUpdateRequest.username());
+        }
+
+        if(userUpdateRequest.firstName() != null && !userUpdateRequest.firstName().equals(user.getFirstName())) {
+            user.setFirstName(userUpdateRequest.firstName());
+        }
+
+        if(userUpdateRequest.lastName() != null && !userUpdateRequest.lastName().equals(user.getLastName())) {
+            user.setLastName(userUpdateRequest.lastName());
+        }
+
+        if(userUpdateRequest.cannotChangePassword()) {
+            user.setCannotChangePassword(false);
+        } else {
+            user.setCannotChangePassword(true);
+        }
+
+        if(userUpdateRequest.roles() != null && !userUpdateRequest.roles().isEmpty()) {
+            Set<Role> roles = resolveRoles(userUpdateRequest.roles());
+            user.setRoles(roles);
+        }
+
+        userRepository.save(user);
+
+        return ApiResponse.builder()
+                .success(1)
+                .code(HttpStatus.OK.value())
+                .data(user.getUsername())
+                .message("User updated successfully")
+                .build();
     }
 
     private Set<Role> resolveRoles(List<String> roleNames) {

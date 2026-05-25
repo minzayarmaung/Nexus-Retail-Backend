@@ -2,6 +2,7 @@ package com.nexusretail.feature.user.controller;
 
 import com.nexusretail.common.dto.response.ApiResponse;
 import com.nexusretail.feature.user.dto.request.UserCreateRequest;
+import com.nexusretail.feature.user.dto.request.UserUpdateRequest;
 import com.nexusretail.feature.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -28,8 +29,21 @@ public class UserController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid input"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<ApiResponse> createUser(@RequestBody UserCreateRequest userCreateRequest , HttpServletRequest request){
+    public ResponseEntity<ApiResponse> createUser(@RequestBody UserCreateRequest userCreateRequest){
         final ApiResponse response = this.userService.createUser(userCreateRequest);
+        return ResponseEntity.ok(response);
+    }
+
+    @PreAuthorize("hasPermission(null, 'UPDATE_USER')")
+    @PatchMapping("/{id}")
+    @Operation(summary = "Update User ", description = "Update an existing user")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "User updated successfully"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid input"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public ResponseEntity<ApiResponse> updateUser(@RequestBody UserUpdateRequest userUpdateRequest , @PathVariable Long id){
+        final ApiResponse response = this.userService.updateUser(userUpdateRequest , id);
         return ResponseEntity.ok(response);
     }
 
@@ -67,7 +81,7 @@ public class UserController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid user ID"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public String suspendUser(@PathVariable Long id, HttpServletRequest request) {
+    public String suspendUser(@PathVariable Long id) {
         return this.userService.suspendUser(id);
     }
 }
