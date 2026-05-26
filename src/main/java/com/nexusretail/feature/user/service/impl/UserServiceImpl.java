@@ -13,6 +13,7 @@ import com.nexusretail.data.repositories.UserRepository;
 import com.nexusretail.feature.user.dto.request.UserCreateRequest;
 import com.nexusretail.feature.user.dto.request.UserUpdateRequest;
 import com.nexusretail.feature.user.dto.response.UserCreateResponse;
+import com.nexusretail.feature.user.dto.response.UserListResponse;
 import com.nexusretail.feature.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -168,6 +169,30 @@ public class UserServiceImpl implements UserService {
                 .code(HttpStatus.OK.value())
                 .data(user.getUsername())
                 .message("User updated successfully")
+                .build();
+    }
+
+    @Override
+    public ApiResponse getUsers() {
+        List<User> users = userRepository.findAll();
+        List<UserListResponse> userListResponses = users.stream()
+                .map(user -> UserListResponse.builder()
+                        .id(user.getId())
+                        .username(user.getUsername())
+                        .firstName(user.getFirstName())
+                        .lastName(user.getLastName())
+                        .email(user.getEmail())
+                        .generatePassword(user.isGeneratedPassword())
+                        .cannotChangePassword(user.isCannotChangePassword())
+                        .Roles(user.getRoles().stream().map(Role::getName).collect(Collectors.toList()))
+                        .build())
+                .collect(Collectors.toList());
+
+        return ApiResponse.builder()
+                .success(1)
+                .code(HttpStatus.OK.value())
+                .data(userListResponses)
+                .message("Users retrieved successfully")
                 .build();
     }
 

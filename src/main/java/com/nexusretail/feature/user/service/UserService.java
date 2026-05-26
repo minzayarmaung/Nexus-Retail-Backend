@@ -16,4 +16,6 @@ public interface UserService {
     String suspendUser(Long id);
 
     ApiResponse updateUser(UserUpdateRequest userUpdateRequest, Long id);
+
+    ApiResponse getUsers();
 }

@@ -21,6 +21,19 @@ public class UserController {
 
     private final UserService userService;
 
+    @PreAuthorize("hasPermission(null, 'GET_USERS')")
+    @GetMapping
+    @Operation(summary = "Get Users", description = "Retrieve a list of all users")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Users retrieved successfully"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "Forbidden"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public ResponseEntity<ApiResponse> getUsers(){
+        final ApiResponse response = this.userService.getUsers();
+        return ResponseEntity.ok(response);
+    }
+
     @PreAuthorize("hasPermission(null, 'CREATE_USER')")
     @PostMapping
     @Operation(summary = "Create User ", description = "Create a new user")
@@ -48,7 +61,7 @@ public class UserController {
     }
 
     @PreAuthorize("hasPermission(null, 'CREATE_USER')")
-    @PostMapping("/check-username")
+    @GetMapping("/check-username")
     @Operation(summary = "Check Username Availability", description = "Check if a username is available for registration")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Username already exists"),
@@ -73,7 +86,7 @@ public class UserController {
         return this.userService.generatePassword(username);
     }
 
-    @PreAuthorize("hasPermission(null, 'SUSPEND_USER')")
+    @PreAuthorize("hasPermission(null, 'DELETE_USER')")
     @PostMapping("/suspend/{id}")
     @Operation(summary = "Suspend User", description = "Suspend a user account")
     @ApiResponses(value = {
