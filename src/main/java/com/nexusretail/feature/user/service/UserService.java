@@ -18,4 +18,6 @@ public interface UserService {
     ApiResponse updateUser(UserUpdateRequest userUpdateRequest, Long id);
 
     ApiResponse getUsers();
+
+    String deleteUser(Long id);
 }

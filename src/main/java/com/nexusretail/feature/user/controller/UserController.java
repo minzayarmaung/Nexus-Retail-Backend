@@ -7,7 +7,6 @@ import com.nexusretail.feature.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,7 +20,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @PreAuthorize("hasPermission(null, 'GET_USERS')")
+    @PreAuthorize("hasPermission(null, 'GET_USER')")
     @GetMapping
     @Operation(summary = "Get Users", description = "Retrieve a list of all users")
     @ApiResponses(value = {
@@ -86,7 +85,7 @@ public class UserController {
         return this.userService.generatePassword(username);
     }
 
-    @PreAuthorize("hasPermission(null, 'DELETE_USER')")
+    @PreAuthorize("hasPermission(null, 'SUSPEND_USER')")
     @PostMapping("/suspend/{id}")
     @Operation(summary = "Suspend User", description = "Suspend a user account")
     @ApiResponses(value = {
@@ -97,4 +96,17 @@ public class UserController {
     public String suspendUser(@PathVariable Long id) {
         return this.userService.suspendUser(id);
     }
+
+    @PreAuthorize("hasPermission(null, 'DELETE_USER')")
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Delete User", description = "Delete a user account")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "User deleted successfully"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid user ID"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public String deleteUser(@PathVariable Long id) {
+        return this.userService.deleteUser(id);
+    }
+
 }

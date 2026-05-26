@@ -196,6 +196,13 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
+    @Override
+    public String deleteUser(Long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
+        userRepository.delete(user);
+        return "User deleted successfully";
+    }
+
     private Set<Role> resolveRoles(List<String> roleNames) {
         if (roleNames == null || roleNames.isEmpty()) {
             Role defaultRole = roleRepository.findByName("USER")
