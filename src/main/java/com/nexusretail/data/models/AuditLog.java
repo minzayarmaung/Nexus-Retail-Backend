@@ -45,7 +45,6 @@ public class AuditLog {
 
     private String browser_name;
     private String operating_system;
-    private String operating_system_name;
     private String operating_system_version;
     private String device_model;
 }
