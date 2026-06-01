@@ -1,6 +1,7 @@
 package com.nexusretail.common.audit;
 
 import com.nexusretail.common.annotation.Auditable;
+import com.nexusretail.common.utils.UserAgentParserUtil;
 import com.nexusretail.data.models.User;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ import java.time.Instant;
 public class AuditableAspect {
 
     private final ApplicationEventPublisher eventPublisher;
+    private final UserAgentParserUtil userAgentParserUtil;
     private final SpelExpressionParser spelParser = new SpelExpressionParser();
 
     @Around("@annotation(auditable)")
@@ -77,6 +79,7 @@ public class AuditableAspect {
                                   Object result, String processingResult, String errorMessage) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         HttpServletRequest req = getRequest();
+        UserAgentParserUtil.UserAgentInfo ua = userAgentParserUtil.parse(req);
 
         return AuditEvent.builder()
                 .action(auditable.action())
@@ -91,6 +94,10 @@ public class AuditableAspect {
                 .apiUrl(req != null ? req.getRequestURI() : null)
                 .ipAddress(req != null ? req.getRemoteAddr() : null)
                 .madeOnDate(Instant.now())
+                .browserName(ua.getBrowserName())
+                .operationSystem(ua.getOperatingSystem())
+                .operationSystemVersion(ua.getOperatingSystemVersion()) 
+                .device_model(ua.getDeviceModel())
                 .build();
     }
 
