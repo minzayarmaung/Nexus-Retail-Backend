@@ -42,15 +42,14 @@ public class AuditableAspect {
         } catch (Exception ex) {
             processingResult = "FAILED";
             errorMessage     = ex.getMessage();
-            throw ex;               // re-throw — never swallow
+            throw ex;
         } finally {
             try {
                 Long entityId = resolveEntityId(auditable.entityIdSpEL(), pjp, result);
                 AuditEvent event = buildEvent(auditable, entityId, pjp.getArgs(),
                         result, processingResult, errorMessage);
-                eventPublisher.publishEvent(event); // fast, in-memory, non-blocking
+                eventPublisher.publishEvent(event);
             } catch (Exception e) {
-                // Audit failure MUST NOT affect business transaction
                 log.warn("Audit publish failed for action={}", auditable.action(), e);
             }
         }
