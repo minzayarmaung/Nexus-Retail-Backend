@@ -34,12 +34,11 @@ public class AuditReadService {
                 .where(eq("actionName",        c.getAction()))
                 .and(eq("entityName",          c.getEntityName()))
                 .and(eq("entityId",            c.getEntityId()))
-                .and(like("makerUsername",     c.getMakerUsername()))
+                .and(like("makerUsername",     c.getMakerName()))
                 .and(eq("processingResult",    c.getProcessingResult()))
                 .and(between("madeOnDate",     c.getFrom(), c.getTo()));
     }
 
-    // Generic spec helpers — add new filters here without touching existing logic (OCP)
     private <T> Specification<AuditLog> eq(String field, T val) {
         return (r, q, cb) -> val == null ? null : cb.equal(r.get(field), val);
     }
