@@ -1,5 +1,6 @@
 package com.nexusretail.system.auth.service;
 
+import com.nexusretail.common.annotation.Auditable;
 import com.nexusretail.common.dto.response.ApiResponse;
 import com.nexusretail.system.auth.dto.request.LoginRequest;
 import com.nexusretail.system.auth.dto.request.ResetPasswordRequest;
@@ -9,7 +10,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface AuthService {
+
     ApiResponse loginUser(LoginRequest loginRequest, HttpServletRequest request, HttpServletResponse response);
+
     ApiResponse logoutUser(HttpServletRequest request, HttpServletResponse response);
 
     ApiResponse refreshToken(HttpServletRequest request, HttpServletResponse httpResponse);
