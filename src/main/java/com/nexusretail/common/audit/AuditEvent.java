@@ -6,6 +6,7 @@ import java.time.Instant;
 
 @Builder
 public record AuditEvent(
+        String actionMethod,
         String action,
         String entityName,
         Long entityId,

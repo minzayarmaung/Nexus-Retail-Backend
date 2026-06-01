@@ -16,6 +16,7 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @SuperBuilder
 @Table(name = "audit", indexes = {
+        @Index(name = "index_action_method", columnList = "action_method"),
         @Index(name = "index_action_name", columnList = "action_name"),
         @Index(name = "index_maker_id", columnList = "maker_id"),
         @Index(name = "index_made_on_date", columnList = "made_on_date")
@@ -26,6 +27,7 @@ public class AuditLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String action_method;
     private String action_name;
     private String entity_name;
     private Long entity_id;

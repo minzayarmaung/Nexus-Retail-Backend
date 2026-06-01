@@ -32,6 +32,7 @@ public class AuditEventPersistenceHandler {
             );
 
             AuditLog auditLog = AuditLog.builder()
+                    .action_method(event.actionMethod())
                     .action_name(event.action())
                     .entity_name(event.entityName())
                     .entity_id(event.entityId())

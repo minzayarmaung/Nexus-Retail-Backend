@@ -38,7 +38,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserDetailsService userDetailsService;
 
     @Override
-    @Auditable(action = "USER_LOGIN", entity = "User")
+    @Auditable(actionMethod = "POST",action = "USER_LOGIN", entity = "User")
     @Transactional
     public ApiResponse loginUser(LoginRequest loginRequest, HttpServletRequest request, HttpServletResponse response) {
 

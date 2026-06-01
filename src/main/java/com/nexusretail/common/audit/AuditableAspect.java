@@ -82,6 +82,7 @@ public class AuditableAspect {
         UserAgentParserUtil.UserAgentInfo ua = userAgentParserUtil.parse(req);
 
         return AuditEvent.builder()
+                .actionMethod(auditable.actionMethod())
                 .action(auditable.action())
                 .entityName(auditable.entity())
                 .entityId(entityId)
@@ -96,7 +97,7 @@ public class AuditableAspect {
                 .madeOnDate(Instant.now())
                 .browserName(ua.getBrowserName())
                 .operationSystem(ua.getOperatingSystem())
-                .operationSystemVersion(ua.getOperatingSystemVersion()) 
+                .operationSystemVersion(ua.getOperatingSystemVersion())
                 .device_model(ua.getDeviceModel())
                 .build();
     }

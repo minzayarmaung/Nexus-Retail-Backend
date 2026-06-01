@@ -6,6 +6,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Auditable {
+    String actionMethod();
     String action();
     String entity();
     String entityIdSpEL() default "";
