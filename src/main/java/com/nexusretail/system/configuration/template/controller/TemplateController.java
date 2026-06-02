@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("${api.base.path}/template")
+@RequestMapping("${api.base.path}/system/template")
 @RequiredArgsConstructor
 @Tag(name = "Template Resolver", description = "Template for Dropdowns")
 public class TemplateController {

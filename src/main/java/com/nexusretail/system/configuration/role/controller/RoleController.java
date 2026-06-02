@@ -20,7 +20,7 @@ import java.util.Collection;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("${api.base.path}/roles")
+@RequestMapping("${api.base.path}/system/roles")
 @Tag(name = "Role Permissions", description = "Assign or remove permissions from a role")
 public class RoleController {
 
