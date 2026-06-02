@@ -3,8 +3,8 @@ package com.nexusretail.security;
 public class SecurityConstants {
 
     public static final String[] WHITELIST = {
-            "/nexusretail/api/v1/auth/login",
-            "/nexusretail/api/v1/auth/logout",
+            "/nexusretail/api/v1/system/auth/login",
+            "/nexusretail/api/v1/system/auth/logout",
 
             // Swagger / OpenAPI v3
             "/v3/api-docs/**",

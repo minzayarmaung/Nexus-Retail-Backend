@@ -1,4 +1,5 @@
 package com.nexusretail.common.service.emailService;
+
 import java.util.Map;
 
 public record OtpEmailRequest(

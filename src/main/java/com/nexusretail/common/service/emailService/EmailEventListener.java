@@ -22,6 +22,7 @@ public class EmailEventListener {
             case PasswordEmailRequest r -> "password-generate for " + r.to();
             case OtpEmailRequest r      -> "OTP for " + r.to();
             case WelcomeEmailRequest r  -> "welcome mail for " + r.to();
+            case PasswordChangedRequest r -> "Password Changed for " + r.to();
         };
 
         log.info("Dispatching email — {}", label);

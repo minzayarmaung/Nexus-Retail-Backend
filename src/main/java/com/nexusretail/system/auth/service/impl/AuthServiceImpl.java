@@ -4,6 +4,8 @@ import com.nexusretail.common.annotation.Auditable;
 import com.nexusretail.common.dto.ResponseUtils;
 import com.nexusretail.common.dto.response.ApiResponse;
 import com.nexusretail.common.exception.UserNotFoundException;
+import com.nexusretail.common.service.emailService.EmailEvent;
+import com.nexusretail.common.service.emailService.PasswordChangedRequest;
 import com.nexusretail.common.utils.PasswordValidator;
 import com.nexusretail.data.models.Role;
 import com.nexusretail.data.models.User;
@@ -18,6 +20,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -36,6 +39,7 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
     private final UserDetailsService userDetailsService;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     @Auditable(actionMethod = "POST",action = "USER_LOGIN", entity = "User")
@@ -167,6 +171,12 @@ public class AuthServiceImpl implements AuthService {
         user.setFirstTimeLogin(false);
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
+        eventPublisher.publishEvent(
+                new EmailEvent(this, new PasswordChangedRequest(
+                        user.getEmail(),
+                        user.getUsername()
+                ))
+        );
         return ResponseUtils.createSuccessResponse("Change password successful", null);
     }
 
