@@ -25,7 +25,7 @@ import java.time.Instant;
 import java.util.List;
 
 @RestController
-@RequestMapping("/${api.base.path}/audit")
+@RequestMapping("${api.base.path}/audit")
 @RequiredArgsConstructor
 @Tag(name = "Audit Management", description = "Audit management APIs")
 public class AuditController {
@@ -65,7 +65,7 @@ public class AuditController {
             @RequestParam(required = false) String operatingSystemVersion,
             @PageableDefault(
                     size = 20,
-                    sort = "made_on_date",
+                    sort = "madeOnDate",
                     direction = Sort.Direction.DESC
             ) Pageable pageable
     ) {

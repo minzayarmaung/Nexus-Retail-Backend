@@ -17,7 +17,7 @@ import java.sql.Timestamp;
 @Slf4j
 public class AuditEventPersistenceHandler {
 
-    private final AuditLogRepository    repository;
+    private final AuditLogRepository      repository;
     private final AuditSerializerRegistry serializerRegistry;
 
     @Async("auditTaskExecutor")
@@ -32,22 +32,22 @@ public class AuditEventPersistenceHandler {
             );
 
             AuditLog auditLog = AuditLog.builder()
-                    .action_method(event.actionMethod())
-                    .action_name(event.action())
-                    .entity_name(event.entityName())
-                    .entity_id(event.entityId())
-                    .maker_id(event.makerId())
-                    .maker_name(event.makerUsername())
-                    .made_on_date(Timestamp.from(event.madeOnDate()))
-                    .processing_result(event.processingResult())
-                    .command_as_json(payload)
-                    .api_url(event.apiUrl())
-                    .ip_address(event.ipAddress())
-                    .error_message(event.errorMessage())
-                    .browser_name(event.browserName())
-                    .operating_system(event.operationSystem())
-                    .operating_system_version(event.operationSystemVersion())
-                    .device_model(event.device_model())
+                    .actionMethod(event.actionMethod())
+                    .actionName(event.action())
+                    .entityName(event.entityName())
+                    .entityId(event.entityId())
+                    .makerId(event.makerId())
+                    .makerName(event.makerUsername())
+                    .madeOnDate(Timestamp.from(event.madeOnDate()))
+                    .processingResult(event.processingResult())
+                    .commandAsJson(payload)
+                    .apiUrl(event.apiUrl())
+                    .ipAddress(event.ipAddress())
+                    .errorMessage(event.errorMessage())
+                    .browserName(event.browserName())
+                    .operatingSystem(event.operationSystem())
+                    .operatingSystemVersion(event.operationSystemVersion())
+                    .deviceModel(event.device_model())
                     .build();
 
             repository.save(auditLog);

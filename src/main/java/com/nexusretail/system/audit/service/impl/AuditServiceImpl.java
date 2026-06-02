@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 
 @Service
 @RequiredArgsConstructor
@@ -36,19 +37,17 @@ public class AuditServiceImpl implements AuditService {
 
     private Specification<AuditLog> buildSpec(AuditSearchCriteria c) {
         return Specification
-                // Basic filters
-                .where(like("action_name",     c.getAction()))
-                .and(like("entity_name",       c.getEntityName()))
-                .and(eq("entity_id",           c.getEntityId()))
-                .and(like("maker_name",        c.getMakerName()))
-                .and(eq("processing_result",   c.getProcessingResult()))
-                .and(betweenDates(             c.getFrom(), c.getTo()))
-                // Advanced filters
-                .and(like("action_method",               c.getActionMethod()))
-                .and(like("browser_name",                c.getBrowserName()))
-                .and(like("device_model",                c.getDeviceModel()))
-                .and(like("operating_system",            c.getOperatingSystem()))
-                .and(like("operating_system_version",    c.getOperatingSystemVersion()));
+                .where(like("actionName",              c.getAction()))
+                .and(like("entityName",                c.getEntityName()))
+                .and(eq("entityId",                    c.getEntityId()))
+                .and(like("makerName",                 c.getMakerName()))
+                .and(eq("processingResult",            c.getProcessingResult()))
+                .and(betweenDates(                     c.getFrom(), c.getTo()))
+                .and(like("actionMethod",              c.getActionMethod()))
+                .and(like("browserName",               c.getBrowserName()))
+                .and(like("deviceModel",               c.getDeviceModel()))
+                .and(like("operatingSystem",           c.getOperatingSystem()))
+                .and(like("operatingSystemVersion",    c.getOperatingSystemVersion()));
     }
 
     private Specification<AuditLog> like(String field, String value) {
@@ -62,14 +61,14 @@ public class AuditServiceImpl implements AuditService {
         return (root, query, cb) -> value == null ? null : cb.equal(root.get(field), value);
     }
 
-    private Specification<AuditLog> betweenDates(java.time.Instant from, java.time.Instant to) {
+    private Specification<AuditLog> betweenDates(Instant from, Instant to) {
         return (root, query, cb) -> {
             if (from == null && to == null) return null;
             Timestamp tsFrom = from != null ? Timestamp.from(from) : null;
             Timestamp tsTo   = to   != null ? Timestamp.from(to)   : null;
-            if (tsFrom == null) return cb.lessThanOrEqualTo(root.get("made_on_date"), tsTo);
-            if (tsTo   == null) return cb.greaterThanOrEqualTo(root.get("made_on_date"), tsFrom);
-            return cb.between(root.get("made_on_date"), tsFrom, tsTo);
+            if (tsFrom == null) return cb.lessThanOrEqualTo(root.get("madeOnDate"), tsTo);
+            if (tsTo   == null) return cb.greaterThanOrEqualTo(root.get("madeOnDate"), tsFrom);
+            return cb.between(root.get("madeOnDate"), tsFrom, tsTo);
         };
     }
 }

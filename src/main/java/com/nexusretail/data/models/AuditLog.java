@@ -16,10 +16,10 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @SuperBuilder
 @Table(name = "audit", indexes = {
-        @Index(name = "index_action_method", columnList = "action_method"),
-        @Index(name = "index_action_name", columnList = "action_name"),
-        @Index(name = "index_maker_id", columnList = "maker_id"),
-        @Index(name = "index_made_on_date", columnList = "made_on_date")
+        @Index(name = "index_action_method",  columnList = "action_method"),
+        @Index(name = "index_action_name",    columnList = "action_name"),
+        @Index(name = "index_maker_id",       columnList = "maker_id"),
+        @Index(name = "index_made_on_date",   columnList = "made_on_date")
 })
 public class AuditLog {
 
@@ -27,26 +27,22 @@ public class AuditLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String action_method;
-    private String action_name;
-    private String entity_name;
-    private Long entity_id;
-    private Long maker_id;
-    private String maker_name;
-
-    private Timestamp made_on_date;
-
-    private String processing_result;
+    private String    actionMethod;           // DB: action_method
+    private String    actionName;             // DB: action_name
+    private String    entityName;             // DB: entity_name
+    private Long      entityId;               // DB: entity_id
+    private Long      makerId;                // DB: maker_id
+    private String    makerName;              // DB: maker_name
+    private Timestamp madeOnDate;             // DB: made_on_date
+    private String    processingResult;       // DB: processing_result
+    private String    apiUrl;                 // DB: api_url
+    private String    ipAddress;              // DB: ip_address
+    private String    errorMessage;           // DB: error_message
+    private String    browserName;            // DB: browser_name
+    private String    operatingSystem;        // DB: operating_system
+    private String    operatingSystemVersion; // DB: operating_system_version
+    private String    deviceModel;            // DB: device_model
 
     @Column(columnDefinition = "TEXT")
-    private String command_as_json;
-
-    private String api_url;
-    private String ip_address;
-    private String error_message;
-
-    private String browser_name;
-    private String operating_system;
-    private String operating_system_version;
-    private String device_model;
+    private String commandAsJson;             // DB: command_as_json
 }
