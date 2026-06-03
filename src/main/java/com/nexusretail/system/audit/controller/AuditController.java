@@ -32,7 +32,7 @@ public class AuditController {
 
     private final AuditService auditService;
 
-    @PreAuthorize("hasPermission(null, 'GET_AUDIT_LOGS')")
+    @PreAuthorize("hasPermission(null, 'READ_AUDIT_LOG')")
     @GetMapping
     @Operation(
             summary = "Search Audit Logs",

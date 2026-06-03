@@ -26,7 +26,6 @@ public class PermissionEvaluator implements org.springframework.security.access.
     @Override
     public boolean hasPermission(Authentication auth, Object target, Object permission) {
 
-        // ── ADD THESE LOGS ──────────────────────────────────────────────────
         log.info("=== PermissionEvaluator called ===");
         log.info("Permission requested: {}", permission);
         log.info("Auth is null: {}", auth == null);
@@ -34,7 +33,6 @@ public class PermissionEvaluator implements org.springframework.security.access.
             log.info("Auth name: {}", auth.getName());
             log.info("Authorities: {}", auth.getAuthorities());
         }
-        // ────────────────────────────────────────────────────────────────────
 
         if (auth == null || permission == null) return false;
 

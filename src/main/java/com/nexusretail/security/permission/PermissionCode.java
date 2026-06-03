@@ -23,10 +23,17 @@ public final class PermissionCode {
 
     // ─── Configuration : Role–Permission assignment ──────────────────────────
     public static final String READ_ROLE_PERMISSION   = "READ_ROLE_PERMISSION";
+    public static final String CREATE_ROLE_PERMISSION = "CREATE_ROLE_PERMISSION";
     public static final String UPDATE_ROLE_PERMISSION = "UPDATE_ROLE_PERMISSION";
+    public static final String DELETE_ROLE_PERMISSION = "DELETE_ROLE_PERMISSION";
 
     // ─── User : User Management  ──────────────────────────
+    public static final String READ_USER   = "READ_USER";
     public static final String CREATE_USER = "CREATE_USER";
     public static final String UPDATE_USER = "UPDATE_USER";
     public static final String DELETE_USER = "DELETE_USER";
+
+    // ─── Audit : Audit Log  ──────────────────────────
+    public static final String READ_AUDIT_LOG = "READ_AUDIT_LOG";
+
 }
