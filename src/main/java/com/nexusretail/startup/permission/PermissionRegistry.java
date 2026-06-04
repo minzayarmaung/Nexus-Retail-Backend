@@ -1,10 +1,10 @@
-package com.nexusretail.security.permission;
+package com.nexusretail.startup.permission;
 
-import lombok.NoArgsConstructor;
+import com.nexusretail.security.permission.PermissionDefinition;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
-import static com.nexusretail.security.permission.PermissionCode.*;
+import static com.nexusretail.startup.permission.PermissionCode.*;
 
 @RequiredArgsConstructor
 public final class PermissionRegistry {
@@ -31,11 +31,13 @@ public final class PermissionRegistry {
                 new PermissionDefinition(READ_ROLE_PERMISSION,   "configuration", "Read Role Permission", "READ"),
                 new PermissionDefinition(UPDATE_ROLE_PERMISSION, "configuration", "Update Role Permissionb", "UPDATE"),
 
-                // User
+                // User - User Management
                 new PermissionDefinition(CREATE_USER,"user", "Create User Data", "CREATE"),
                 new PermissionDefinition(UPDATE_USER,"user", "Update User Data", "UPDATE"),
-                new PermissionDefinition(DELETE_USER,"user", "Delete User Data", "DELETE")
+                new PermissionDefinition(DELETE_USER,"user", "Delete User Data", "DELETE"),
 
+                // Audit - Audit Management
+                new PermissionDefinition(READ_AUDIT_LOG, "audit", "Read Audit Data", "READ")
 
         );
     }

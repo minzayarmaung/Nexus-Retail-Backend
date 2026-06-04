@@ -1,7 +1,8 @@
-package com.nexusretail.security.permission;
+package com.nexusretail.startup.permission;
 
 import com.nexusretail.data.models.Permission;
 import com.nexusretail.data.repositories.PermissionRepository;
+import com.nexusretail.security.permission.PermissionDefinition;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;

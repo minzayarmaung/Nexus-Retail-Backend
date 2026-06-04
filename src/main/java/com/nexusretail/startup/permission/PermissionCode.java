@@ -1,6 +1,5 @@
-package com.nexusretail.security.permission;
+package com.nexusretail.startup.permission;
 
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
