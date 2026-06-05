@@ -33,5 +33,8 @@ public record LoginResponse(
         boolean isFirstTimeLogin,
 
         @Schema(description = "", example = "")
-        boolean isGeneratePassword
+        boolean isGeneratePassword,
+
+        @Schema(description = "", example = "")
+        boolean cannotChangePassword
 ) {}

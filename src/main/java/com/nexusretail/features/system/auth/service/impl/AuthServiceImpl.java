@@ -98,6 +98,7 @@ public class AuthServiceImpl implements AuthService {
                 .userId(user.getId())
                 .isFirstTimeLogin(user.isFirstTimeLogin())
                 .isGeneratePassword(user.isGeneratedPassword())
+                .cannotChangePassword(user.isCannotChangePassword())
                 .build();
 
         return ResponseUtils.createSuccessResponse("Login successful", loginResponse);
