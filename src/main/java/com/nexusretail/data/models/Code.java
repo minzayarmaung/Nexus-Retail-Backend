@@ -22,6 +22,9 @@ public class Code extends Auditable {
     @Column(nullable = false, unique = true)
     private String codeType;
 
+    @Column(nullable = true)
+    private boolean systemDefined;
+
     @Column(length = 500)
     private String description;
 }
