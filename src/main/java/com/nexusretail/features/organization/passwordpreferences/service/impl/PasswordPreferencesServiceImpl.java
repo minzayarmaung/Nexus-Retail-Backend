@@ -20,9 +20,9 @@ public class PasswordPreferencesServiceImpl implements PasswordPreferencesServic
     public ResponseEntity<PasswordValidationPolicyData> getPasswordPreferences() {
         List<PasswordValidationPolicy> data = passwordPreferencesRepository.findAll();
         if(data.isEmpty()){
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.ok(null);
         }
-        PasswordValidationPolicy policy = data.get(0);
+        PasswordValidationPolicy policy = data.getFirst();
         PasswordValidationPolicyData response = PasswordValidationPolicyData.builder()
                 .id(policy.getId())
                 .regex(policy.getRegex())
