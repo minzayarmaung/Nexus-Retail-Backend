@@ -1,5 +1,6 @@
 package com.nexusretail.startup.code;
 
+import com.nexusretail.common.constant.Status;
 import com.nexusretail.data.models.Code;
 import com.nexusretail.data.models.CodeValue;
 import com.nexusretail.data.repositories.CodeRepository;
@@ -32,6 +33,7 @@ public class CodeSeeder implements ApplicationRunner {
                             Code.builder()
                                     .codeType(def.codeType())
                                     .description(def.description())
+                                    .status(def.status())
                                     .build()
                     ));
 
@@ -43,6 +45,7 @@ public class CodeSeeder implements ApplicationRunner {
                                     .value(entry.value())
                                     .display(entry.displayName())
                                     .orderPosition(entry.orderPosition())
+                                    .status(Status.ACTIVE)
                                     .build()
                     );
                     seededValues++;
