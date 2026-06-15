@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -17,12 +18,30 @@ public class PasswordPreferencesServiceImpl implements PasswordPreferencesServic
     private final PasswordPreferencesRepository passwordPreferencesRepository;
 
     @Override
-    public ResponseEntity<PasswordValidationPolicyData> getPasswordPreferences() {
+    public Collection<PasswordValidationPolicyData> getPasswordPreferences() {
         List<PasswordValidationPolicy> data = passwordPreferencesRepository.findAll();
         if(data.isEmpty()){
-            return ResponseEntity.ok(null);
+            return java.util.Collections.emptyList();
         }
-        PasswordValidationPolicy policy = data.getFirst();
+        return data.stream().map(policy -> PasswordValidationPolicyData.builder()
+                .id(policy.getId())
+                .regex(policy.getRegex())
+                .description(policy.getDescription())
+                .key(policy.getKey())
+                .active(policy.isActive())
+                .build()).toList();
+    }
+
+    @Override
+    public ResponseEntity<PasswordValidationPolicyData> updatePasswordPreferences(Long id) {
+        PasswordValidationPolicy policy = passwordPreferencesRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Password validation policy not found"));
+
+        passwordPreferencesRepository.deactivateOtherPolicies(id);
+
+        policy.setActive(true);
+        passwordPreferencesRepository.save(policy);
+
         PasswordValidationPolicyData response = PasswordValidationPolicyData.builder()
                 .id(policy.getId())
                 .regex(policy.getRegex())

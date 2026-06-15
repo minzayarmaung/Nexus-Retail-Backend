@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface SystemMenuRepository extends JpaRepository<SystemMenu, Long> {
-    List<SystemMenu> findAllActiveOrderByDisplayOrder();
+    List<SystemMenu> findAllActiveOrderByDisplayOrder(int displayOrder);
 }

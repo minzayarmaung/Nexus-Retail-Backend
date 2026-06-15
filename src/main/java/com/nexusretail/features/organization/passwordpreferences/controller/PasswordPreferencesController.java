@@ -6,9 +6,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Collection;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,8 +21,15 @@ public class PasswordPreferencesController {
 
     @PreAuthorize("hasPermission(null, 'READ_PASSWORD_PREFERENCES')")
     @GetMapping
-    public ResponseEntity<PasswordValidationPolicyData> getPasswordPreferences(){
-        return this.passwordPreferencesService.getPasswordPreferences();
+    public ResponseEntity<Collection<PasswordValidationPolicyData>> getPasswordPreferences(){
+        Collection<PasswordValidationPolicyData> response = this.passwordPreferencesService.getPasswordPreferences();
+        return ResponseEntity.ok(response);
+    }
+
+    @PreAuthorize("hasPermission(null, 'UPDATE_PASSWORD_PREFERENCES')")
+    @PatchMapping("/{id}")
+    public ResponseEntity<PasswordValidationPolicyData> updatePasswordPreference(@PathVariable final Long id){
+        return this.passwordPreferencesService.updatePasswordPreferences(id);
     }
 
 }
