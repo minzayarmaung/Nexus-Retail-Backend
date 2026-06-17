@@ -4,6 +4,7 @@ import com.nexusretail.data.models.PasswordValidationPolicy;
 import com.nexusretail.data.repositories.PasswordPreferencesRepository;
 import com.nexusretail.features.organization.passwordpreferences.dto.response.PasswordValidationPolicyData;
 import com.nexusretail.features.organization.passwordpreferences.service.PasswordPreferencesService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -29,9 +30,11 @@ public class PasswordPreferencesServiceImpl implements PasswordPreferencesServic
                 .description(policy.getDescription())
                 .key(policy.getKey())
                 .active(policy.isActive())
-                .build()).toList();
+                .build())
+                .toList();
     }
 
+    @Transactional
     @Override
     public ResponseEntity<PasswordValidationPolicyData> updatePasswordPreferences(Long id) {
         PasswordValidationPolicy policy = passwordPreferencesRepository.findById(id)
@@ -49,6 +52,7 @@ public class PasswordPreferencesServiceImpl implements PasswordPreferencesServic
                 .key(policy.getKey())
                 .active(policy.isActive())
                 .build();
+
         return ResponseEntity.ok(response);
     }
 }
