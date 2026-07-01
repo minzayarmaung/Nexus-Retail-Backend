@@ -1,6 +1,7 @@
 package com.nexusretail.features.organization.holiday.controller;
 
 import com.nexusretail.features.organization.holiday.dto.HolidayData;
+import com.nexusretail.features.organization.holiday.dto.request.HolidayDataRequest;
 import com.nexusretail.features.organization.holiday.service.HolidayService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -8,10 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -33,5 +31,12 @@ public class HolidayController {
             @RequestParam(required = false) LocalDate toDate){
 
         return this.holidayService.retrieveAllHolidaysBySearchParameters(officeId , fromDate , toDate);
+    }
+
+    @PreAuthorize("hasPermission(null, 'CREATE_HOLIDAY')")
+    @PostMapping
+    @Operation(summary = "Create a new holiday", description = "Create a new holiday for the organization")
+    public String createNewHoliday(@Parameter(hidden = true) final @RequestBody HolidayDataRequest holidayDataRequest) {
+        return this.holidayService.createNewHoliday(holidayDataRequest);
     }
 }
