@@ -10,4 +10,6 @@ public interface HolidayService {
     Collection<HolidayData> retrieveAllHolidaysBySearchParameters(Long officeId, LocalDate fromDate, LocalDate toDate);
 
     String createNewHoliday(HolidayDataRequest holidayDataRequest);
+
+    String activateHoliday(Long holidayId);
 }

@@ -2,17 +2,21 @@ package com.nexusretail.features.organization.holiday.service.impl;
 
 import com.nexusretail.common.constant.Status;
 import com.nexusretail.data.models.Holiday;
+import com.nexusretail.data.models.Role;
 import com.nexusretail.data.repositories.HolidayRespository;
 import com.nexusretail.data.repositories.OfficeRepository;
 import com.nexusretail.features.organization.holiday.dto.HolidayData;
 import com.nexusretail.features.organization.holiday.dto.request.HolidayDataRequest;
 import com.nexusretail.features.organization.holiday.service.HolidayService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Set;
+
+import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 
 @Service
     @RequiredArgsConstructor
@@ -47,6 +51,18 @@ import java.util.Set;
 
             return "Holiday created successfully";
         }
+
+    @Override
+    public String activateHoliday(Long holidayId) {
+            Holiday holiday = holidayRepository.findById(holidayId)
+                .orElseThrow(() ->
+                        new EntityNotFoundException("Role not found with id: " + holidayId));
+
+            holiday.setStatus(Status.ACTIVE);
+            holidayRepository.save(holiday);
+
+            return "Holiday Activated Successfully.";
+    }
 
     @Override
     public Collection<HolidayData> retrieveAllHolidaysBySearchParameters(

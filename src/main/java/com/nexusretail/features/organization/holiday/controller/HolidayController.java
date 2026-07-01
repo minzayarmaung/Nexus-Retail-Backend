@@ -39,4 +39,11 @@ public class HolidayController {
     public String createNewHoliday(@Parameter(hidden = true) final @RequestBody HolidayDataRequest holidayDataRequest) {
         return this.holidayService.createNewHoliday(holidayDataRequest);
     }
+
+    @PreAuthorize("hasPermission(null, 'ACTIVATE_HOLIDAY')")
+    @PatchMapping("/{holidayId}/activate")
+    @Operation(summary = "Activate a holiday", description = "Activate a holiday for the organization")
+    public String activateHoliday(@PathParam("holidayId") final Long holidayId){
+        return this.holidayService.activateHoliday(holidayId);
+    }
 }
