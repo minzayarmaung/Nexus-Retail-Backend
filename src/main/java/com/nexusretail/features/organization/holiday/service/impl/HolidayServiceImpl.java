@@ -16,8 +16,6 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Set;
 
-import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
-
 @Service
     @RequiredArgsConstructor
     public class HolidayServiceImpl implements HolidayService {
@@ -62,6 +60,51 @@ import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
             holidayRepository.save(holiday);
 
             return "Holiday Activated Successfully.";
+    }
+
+    @Override
+    public HolidayData retrieveHoliday(Long holidayId) {
+            Holiday holiday = holidayRepository.findById(holidayId)
+                .orElseThrow(() ->
+                        new EntityNotFoundException("Holiday not found with id: " + holidayId));
+            return mapToHolidayData(holiday);
+    }
+
+    @Override
+    public String updateHoliday(Long holidayId, HolidayDataRequest holidayDataRequest) {
+            validateHolidayRequest(holidayDataRequest);
+
+            Holiday holiday = holidayRepository.findById(holidayId)
+                    .orElseThrow(() ->
+                            new EntityNotFoundException("Holiday not found with id: " + holidayId));
+
+            holiday.setName(holidayDataRequest.name());
+            holiday.setFromDate(holidayDataRequest.fromDate());
+            holiday.setToDate(holidayDataRequest.toDate());
+            holiday.setRescheduledTo(holidayDataRequest.rescheduledTo());
+            holiday.setDescription(holidayDataRequest.description());
+
+            holiday.setOffices(
+                    holidayDataRequest.officeId() == null
+                            ? Set.of()
+                            : holidayDataRequest.officeId()
+            );
+
+            holidayRepository.save(holiday);
+
+            return "Holiday updated successfully";
+    }
+
+    @Override
+    public String deleteHoliday(Long holidayId) {
+
+            Holiday holiday = holidayRepository.findById(holidayId)
+                    .orElseThrow(() ->
+                            new EntityNotFoundException("Holiday not found with id: " + holidayId));
+
+            holidayRepository.delete(holiday);
+
+            return "Holiday deleted successfully";
     }
 
     @Override

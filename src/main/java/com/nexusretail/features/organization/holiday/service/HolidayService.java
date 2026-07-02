@@ -12,4 +12,10 @@ public interface HolidayService {
     String createNewHoliday(HolidayDataRequest holidayDataRequest);
 
     String activateHoliday(Long holidayId);
+
+    HolidayData retrieveHoliday(Long holidayId);
+
+    String updateHoliday(Long holidayId, HolidayDataRequest holidayDataRequest);
+
+    String deleteHoliday(Long holidayId);
 }

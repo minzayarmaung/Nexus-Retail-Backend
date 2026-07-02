@@ -46,4 +46,25 @@ public class HolidayController {
     public String activateHoliday(@PathParam("holidayId") final Long holidayId){
         return this.holidayService.activateHoliday(holidayId);
     }
+
+    @PreAuthorize("hasPermission(null, 'READ_HOLIDAY')")
+    @GetMapping("/{holidayId}")
+    @Operation(summary = "Retrieve a specific holiday", description = "Retrieve a specific holiday for the organization")
+    public HolidayData retrieveOne(@Parameter(hidden = true) final @PathVariable Long holidayId) {
+        return this.holidayService.retrieveHoliday(holidayId);
+    }
+
+    @PreAuthorize("hasPermission(null, 'UPDATE_HOLIDAY')")
+    @PutMapping("/{holidayId}")
+    @Operation(summary = "Update a holiday", description = "Update a holiday for the organization")
+    public String updateHoliday(final @PathVariable Long holidayId, @Parameter(hidden = true) final @RequestBody HolidayDataRequest holidayDataRequest) {
+        return this.holidayService.updateHoliday(holidayId , holidayDataRequest);
+    }
+
+    @PreAuthorize("hasPermission(null, 'DELETE_HOLIDAY')")
+    @DeleteMapping("/{holidayId}")
+    @Operation(summary = "Delete a holiday", description = "Delete a holiday for the organization")
+    public String deleteHoliday(final @PathVariable Long holidayId) {
+        return this.holidayService.deleteHoliday(holidayId);
+    }
 }
