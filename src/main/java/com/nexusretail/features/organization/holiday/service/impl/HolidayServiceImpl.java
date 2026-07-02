@@ -2,9 +2,7 @@ package com.nexusretail.features.organization.holiday.service.impl;
 
 import com.nexusretail.common.constant.Status;
 import com.nexusretail.data.models.Holiday;
-import com.nexusretail.data.models.Role;
 import com.nexusretail.data.repositories.HolidayRespository;
-import com.nexusretail.data.repositories.OfficeRepository;
 import com.nexusretail.features.organization.holiday.dto.HolidayData;
 import com.nexusretail.features.organization.holiday.dto.request.HolidayDataRequest;
 import com.nexusretail.features.organization.holiday.service.HolidayService;
@@ -21,7 +19,6 @@ import java.util.Set;
     public class HolidayServiceImpl implements HolidayService {
 
         private final HolidayRespository holidayRepository;
-        private final OfficeRepository officeRepository;
 
         @Override
         public String createNewHoliday(HolidayDataRequest holidayDataRequest) {
