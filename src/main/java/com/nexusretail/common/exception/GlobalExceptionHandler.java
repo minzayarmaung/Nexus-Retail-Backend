@@ -4,6 +4,7 @@ import com.nexusretail.common.dto.response.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -31,5 +32,15 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(response);
+    }
+
+    @ExceptionHandler(NoAuthorizationException.class)
+    public ResponseEntity<ApiResponse> handleNoAuthorization(final NoAuthorizationException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(ApiResponse.builder()
+                        .success(0)
+                        .code(HttpStatus.FORBIDDEN.value())
+                        .message(ex.getMessage())
+                        .build());
     }
 }

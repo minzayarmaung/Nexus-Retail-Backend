@@ -56,4 +56,8 @@ public class User extends Auditable {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles = new HashSet<>();
+
+    @ManyToOne
+    @JoinColumn(name = "office_id", nullable = false)
+    private Office office;
 }

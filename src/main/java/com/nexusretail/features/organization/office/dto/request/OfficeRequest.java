@@ -6,5 +6,5 @@ import lombok.Builder;
 public record OfficeRequest(
     String name,
     String openingDate,
-    String parentId
+    Long parentId
 ) {}

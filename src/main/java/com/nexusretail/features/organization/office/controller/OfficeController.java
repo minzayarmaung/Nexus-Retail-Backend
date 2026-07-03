@@ -1,6 +1,7 @@
 package com.nexusretail.features.organization.office.controller;
 
 import com.nexusretail.features.organization.office.dto.request.OfficeRequest;
+import com.nexusretail.features.organization.office.dto.response.OfficeResponse;
 import com.nexusretail.features.organization.office.service.OfficeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -23,7 +24,7 @@ public class OfficeController {
     @PreAuthorize("hasPermission(null, 'CREATE_OFFICE')")
     @PostMapping
     @Operation(summary = "Create an Office", description = "Mandatory Fields\n" + "name, openingDate, parentId")
-    public String createOffice(@Parameter(hidden = true) final @RequestBody OfficeRequest officeRequest){
+    public OfficeResponse createOffice(@Parameter(hidden = true) final @RequestBody OfficeRequest officeRequest){
         return this.officeService.createOffice(officeRequest);
     }
 }
