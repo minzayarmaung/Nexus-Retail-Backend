@@ -57,7 +57,7 @@ public class User extends Auditable {
     )
     private Set<Role> roles = new HashSet<>();
 
-    @ManyToOne
-    @JoinColumn(name = "office_id", nullable = false)
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "office_id", nullable = true)
     private Office office;
 }

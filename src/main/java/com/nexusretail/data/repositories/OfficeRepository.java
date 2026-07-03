@@ -10,4 +10,6 @@ public interface OfficeRepository extends JpaRepository<Office, Long> {
 
     @Query("select o from Office o left join fetch o.children where o.id = :id")
     Optional<Office> findByIdWithChildren(@Param("id") Long id);
+
+    Optional<Office> findByName(String name);
 }
