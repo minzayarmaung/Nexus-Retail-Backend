@@ -4,6 +4,6 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
     <changeSet id="V2__insert_roles.sql" author="generated">
-        <sqlFile path="classpath:db/migration/V2__insert_roles.sql" relativeToChangelogFile="false" splitStatements="true"/>
+        <sqlFile path="db/migration/V2__insert_roles.sql" relativeToChangelogFile="false" splitStatements="true"/>
     </changeSet>
 </databaseChangeLog>

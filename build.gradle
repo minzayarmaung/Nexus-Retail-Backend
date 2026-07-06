@@ -61,7 +61,7 @@ task generateLiquibaseMaster {
         def sqlFiles = fileTree(dir: srcMigrationDir, includes: includePatterns, excludes: excludePatterns).matching { include '**/*.sql' }.files.sort()
         sqlFiles.each { f ->
             def gen = new File(changelogDir, f.name.replaceAll('\\.sql$', '.xml'))
-            def relativeSql = "classpath:db/migration/${f.name}"
+            def relativeSql = "db/migration/${f.name}"
             gen.text = """<?xml version="1.0" encoding="UTF-8"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -82,7 +82,7 @@ task generateLiquibaseMaster {
         masterSb.append('                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">\n')
         fileTree(dir: changelogDir, include: '**/*.xml').files.sort().each { gf ->
             def cp = "db/changelog/generated/${gf.name}"
-            masterSb.append("    <include file=\"classpath:${cp}\"/>\n")
+        masterSb.append("    <include file=\"${cp}\"/>\n")
         }
         masterSb.append('</databaseChangeLog>\n')
         masterFile.parentFile.mkdirs()

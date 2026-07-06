@@ -4,6 +4,6 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
     <changeSet id="V3__insert_offices.sql" author="generated">
-        <sqlFile path="classpath:db/migration/V3__insert_offices.sql" relativeToChangelogFile="false" splitStatements="true"/>
+        <sqlFile path="db/migration/V3__insert_offices.sql" relativeToChangelogFile="false" splitStatements="true"/>
     </changeSet>
 </databaseChangeLog>
