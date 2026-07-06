@@ -20,6 +20,7 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.flywaydb:flyway-core'
+	implementation 'org.liquibase:liquibase-core'
 	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5'
@@ -44,3 +45,50 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+// --- Liquibase master generation: wraps existing SQL (flyway) migrations as xml changelogs
+//    and creates a db.changelog-master.xml that includes them. Configure include/exclude
+//    via -PliquibaseInclude and -PliquibaseExclude (comma-separated glob patterns).
+
+task generateLiquibaseMaster {
+    doLast {
+        def srcMigrationDir = file('src/main/resources/db/migration')
+        def changelogDir = file('src/main/resources/db/changelog/generated')
+        changelogDir.mkdirs()
+        def masterFile = file('src/main/resources/db/changelog/db.changelog-master.xml')
+        def includePatterns = project.hasProperty('liquibaseInclude') ? project.liquibaseInclude.split(',') : ['**/*.sql']
+        def excludePatterns = project.hasProperty('liquibaseExclude') ? project.liquibaseExclude.split(',') : []
+        def sqlFiles = fileTree(dir: srcMigrationDir, includes: includePatterns, excludes: excludePatterns).matching { include '**/*.sql' }.files.sort()
+        sqlFiles.each { f ->
+            def gen = new File(changelogDir, f.name.replaceAll('\\.sql$', '.xml'))
+            def relativeSql = "classpath:db/migration/${f.name}"
+            gen.text = """<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+    <changeSet id="${f.name}" author="generated">
+        <sqlFile path="${relativeSql}" relativeToChangelogFile="false" splitStatements="true"/>
+    </changeSet>
+</databaseChangeLog>
+"""
+        }
+        // Build master
+        def masterSb = new StringBuilder()
+        masterSb.append('<?xml version="1.0" encoding="UTF-8"?>\n')
+        masterSb.append('<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"\n')
+        masterSb.append('                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"\n')
+        masterSb.append('                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog\n')
+        masterSb.append('                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">\n')
+        fileTree(dir: changelogDir, include: '**/*.xml').files.sort().each { gf ->
+            def cp = "db/changelog/generated/${gf.name}"
+            masterSb.append("    <include file=\"classpath:${cp}\"/>\n")
+        }
+        masterSb.append('</databaseChangeLog>\n')
+        masterFile.parentFile.mkdirs()
+        masterFile.text = masterSb.toString()
+        println "Generated ${sqlFiles.size()} wrapper changelogs and master at ${masterFile}"
+    }
+}
+
+tasks.named('processResources') { dependsOn generateLiquibaseMaster }

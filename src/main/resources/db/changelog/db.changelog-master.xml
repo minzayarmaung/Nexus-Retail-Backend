@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+    <include file="classpath:db/changelog/generated/V1__create_password_validation_policy.xml"/>
+    <include file="classpath:db/changelog/generated/V2__insert_roles.xml"/>
+    <include file="classpath:db/changelog/generated/V3__insert_offices.xml"/>
+    <include file="classpath:db/changelog/generated/V4__insert_password_policies.xml"/>
+    <include file="classpath:db/changelog/generated/V5__create_admin_user.xml"/>
+</databaseChangeLog>
